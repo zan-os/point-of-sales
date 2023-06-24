@@ -1,6 +1,5 @@
-name: product_list
+name: common
 description: A new Flutter package project.
-publish_to: none
 version: 0.0.1
 homepage:
 
@@ -9,14 +8,12 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
+  bloc: ^8.1.2
+  bloc_provider: ^1.0.0
+  equatable: ^2.0.5
   flutter:
     sdk: flutter
-
-  ui:
-    path: ../../core/ui
-
-  common:
-    path: ../../core/common
+  flutter_bloc: ^8.1.3
 
 dev_dependencies:
   flutter_test:

@@ -8,6 +8,7 @@ export 'package:ui/widgets/pending_action_tile_widget.dart';
 export 'package:ui/widgets/statistic_data_widget.dart';
 export 'package:skeletons/skeletons.dart';
 export 'package:ui/widgets/app_bar_widget.dart';
+export 'package:ui/widgets/rounded_button_widget.dart';
 export 'package:ui/widgets/search_bar_widget.dart';
 
 /// A Calculator.

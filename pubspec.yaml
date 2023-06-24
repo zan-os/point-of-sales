@@ -19,6 +19,12 @@ dependencies:
   product_list:
     path: features/product_list
 
+  auth:
+    path: features/auth
+
+  profile:
+    path: features/profile
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,7 +1,7 @@
-name: product_list
+name: auth
 description: A new Flutter package project.
-publish_to: none
 version: 0.0.1
+publish_to: none
 homepage:
 
 environment:
@@ -15,8 +15,8 @@ dependencies:
   ui:
     path: ../../core/ui
 
-  common:
-    path: ../../core/common
+  point_of_sales:
+    path: ../../
 
 dev_dependencies:
   flutter_test:

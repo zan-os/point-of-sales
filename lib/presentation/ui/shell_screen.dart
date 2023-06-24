@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:home/home.dart';
 import 'package:product_list/product_list.dart';
+import 'package:profile/profile.dart';
 
 import '../widgets/fluid_nav_bar.dart';
 
@@ -69,9 +70,7 @@ class _ShellScreenState extends State<ShellScreen> {
             break;
           case 4:
             log('ojan 4');
-            _child = const Center(
-              child: Text('ProfilePage'),
-            );
+            _child = ProfileScreen();
             _selectedIndex = index;
             break;
         }
