@@ -20,11 +20,17 @@ dependencies:
   add_product:
     path: features/add_product
 
+  add_cashier:
+    path: features/add_cashier
+
   common:
     path: core/common
 
   ui:
     path: core/ui
+
+  dependencies:
+    path: core/dependencies
 
 dev_dependencies:
   flutter_test:

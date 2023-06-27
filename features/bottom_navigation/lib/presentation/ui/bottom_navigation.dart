@@ -1,8 +1,9 @@
 import 'dart:developer';
 
+import 'package:cart/presentation/ui/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:home/presentation/ui/home_screen.dart';
-import 'package:product_list/product_list.dart';
+import 'package:product_list/presentation/ui/product_list.dart';
 import 'package:profile/presentation/ui/profile_screen.dart';
 
 import '../widgets/fluid_bottom_navbar.dart';
@@ -63,9 +64,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
             break;
           case 3:
             log('ojan 3');
-            _child = const Center(
-              child: Text('StorePage'),
-            );
+            _child = CartScreen();
             _selectedIndex = index;
             break;
           case 4:

@@ -1,5 +1,7 @@
+import 'package:common/navigation/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:ui/const/colors_constants.dart';
+import 'package:ui/widgets/app_bar_widget.dart';
 import 'package:ui/widgets/round_bordered_text_field.dart';
 import 'package:ui/widgets/rounded_button_widget.dart';
 
@@ -14,6 +16,12 @@ class ProfileScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
       child: Scaffold(
+        key: navigatorKey,
+        appBar: const AppBarWidget(
+          isHome: false,
+          title: 'Profile',
+          enableLeading: false,
+        ),
         backgroundColor: Colors.white,
         body: _buildBody(),
       ),
@@ -29,11 +37,19 @@ class ProfileScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           children: [
             Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 16),
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 24),
               child: Container(
                 height: 100,
                 width: 100,
-                color: ColorConstants.primaryYellow,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: ColorConstants.primaryYellow,
+                ),
+                child: const Icon(
+                  Icons.person_outline_rounded,
+                  color: ColorConstants.whiteBackground,
+                  size: 70,
+                ),
               ),
             ),
             _buildProfileForm(label: 'Fauzan'),
@@ -46,18 +62,18 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildLogoutButton() {
-    return RoundedButtonWidget(
-      title: 'Sign Out',
-      onTap: () => navigatorKey.currentState?.popAndPushNamed('/auth'),
-    );
+    return Builder(builder: (context) {
+      return RoundedButtonWidget(
+        title: 'Sign Out',
+        onTap: () => Navigator.popAndPushNamed(context, AppRouter.auth),
+      );
+    });
   }
 
   Padding _buildProfileForm({String label = '-'}) {
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
-      child: RoundBorderedTextFIeld(onChange: (p0) {
-        
-      },
+      child: RoundBorderedTextFIeld(
         enabled: false,
         label: label,
       ),

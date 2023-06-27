@@ -172,14 +172,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
             const SizedBox(
               height: 16.0,
             ),
-            _buildLogoutButton(),
+            _buildAddButton(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildLogoutButton() {
+  Widget _buildAddButton() {
     return RoundedButtonWidget(
       title: 'Tambah Produk',
       onTap: () {},

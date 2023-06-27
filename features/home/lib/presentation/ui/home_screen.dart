@@ -13,7 +13,11 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppBarWidget(isHome: true, title: 'Hello Ozan!'),
+      appBar: const AppBarWidget(
+        isHome: true,
+        title: 'Hello Ozan!',
+        enableLeading: false,
+      ),
       body: SingleChildScrollView(
         child: Stack(
           children: [
@@ -86,12 +90,13 @@ class HomeScreen extends StatelessWidget {
     final List<FeatureGridModel> gridItem = [
       const FeatureGridModel(
         icon: Icons.add_box_outlined,
-        title: 'Add Product',
+        title: 'Tambah Produk',
         page: '/add-product',
       ),
       const FeatureGridModel(
         icon: Icons.add_business_outlined,
-        title: 'Add Outlet',
+        title: 'Tambah Pegawai',
+        page: '/add-cashier',
       ),
       const FeatureGridModel(
         icon: Icons.stacked_bar_chart_outlined,
@@ -139,6 +144,7 @@ class HomeScreen extends StatelessWidget {
                 Text(
                   item.title,
                   style: const TextStyle(fontSize: 14.0),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),

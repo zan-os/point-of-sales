@@ -5,13 +5,13 @@ class RoundBorderedTextFIeld extends StatelessWidget {
   final String label;
   final TextEditingController? controller;
   final bool enabled;
-  final Function(String) onChange;
+  final Function(String)? onChange;
   const RoundBorderedTextFIeld({
     super.key,
     required this.label,
     this.controller,
     required this.enabled,
-    required this.onChange,
+    this.onChange,
   });
 
   @override
@@ -32,7 +32,9 @@ class RoundBorderedTextFIeld extends StatelessWidget {
       ),
       maxLines: null,
       onChanged: (value) {
-        onChange(value);
+        if (onChange != null) {
+          onChange!(value);
+        }
       },
     );
   }

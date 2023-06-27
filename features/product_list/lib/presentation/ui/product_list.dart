@@ -192,7 +192,7 @@ class ProductListScreenState extends State<ProductListScreen> {
       child: Scaffold(
         appBar: const AppBarWidget(
           isHome: false,
-          title: 'Product',
+          title: 'Product',enableLeading: false,
         ),
         key: scaffoldKey,
         backgroundColor: backgroundColor,

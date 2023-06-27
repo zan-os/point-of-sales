@@ -18,6 +18,9 @@ dependencies:
   common:
     path: ../../core/common
 
+  dependencies:
+    path: ../../core/dependencies
+
   home:
     path: ../home
 
@@ -27,8 +30,8 @@ dependencies:
   product_list:
     path: ../product_list
 
-  dependencies:
-    path: ../../core/dependencies
+  cart:
+    path: ../cart
 
 dev_dependencies:
   flutter_test:
