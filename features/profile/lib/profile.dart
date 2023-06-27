@@ -1,7 +1,5 @@
 library profile;
 
-export 'package:profile/presentation/ui/profile_screen.dart';
-
 
 /// A Calculator.
 class Calculator {

@@ -15,6 +15,12 @@ dependencies:
   ui:
     path: ../../core/ui
 
+  common:
+    path: ../../core/common
+
+  dependencies:
+    path: ../../core/dependencies
+
   point_of_sales:
     path: ../../
 

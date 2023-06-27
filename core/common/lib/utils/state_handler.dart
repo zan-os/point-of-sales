@@ -1,7 +1,9 @@
 import 'dart:developer';
 
+import 'package:dependencies/bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import '../common.dart';
+
+import '../cubit/cubit_state.dart';
 
 class StateHandler<T extends StateStreamable<CubitState>>
     extends StatelessWidget {

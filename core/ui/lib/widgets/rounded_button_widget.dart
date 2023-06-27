@@ -1,4 +1,6 @@
-import '../ui.dart';
+import 'package:flutter/material.dart';
+
+import '../const/colors_constants.dart';
 
 class RoundedButtonWidget extends StatelessWidget {
   final String title;
@@ -17,7 +19,7 @@ class RoundedButtonWidget extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
             backgroundColor: ColorConstants.primaryYellow),
-        onPressed: () async {
+        onPressed: () {
           onTap();
         },
         child: Text(title),

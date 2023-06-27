@@ -1,6 +1,10 @@
 import 'dart:developer';
 
-import 'package:ui/ui.dart';
+import 'package:flutter/material.dart';
+import 'package:ui/const/colors_constants.dart';
+import 'package:ui/widgets/app_bar_widget.dart';
+import 'package:ui/widgets/rounded_product_container.dart';
+import 'package:ui/widgets/search_bar_widget.dart';
 
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({Key? key}) : super(key: key);
@@ -65,74 +69,9 @@ class ProductListScreenState extends State<ProductListScreen> {
   }
 
   Widget _buildProductItem(BuildContext context) {
-    const double borderRadius = 20;
-    return RoundedContainerDrawable(
-      radius: borderRadius,
-      padding: 0,
-      child: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 58),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(25),
-                topRight: Radius.circular(25),
-              ),
-              child: Image.network(
-                'https://picsum.photos/seed/418/600',
-                width: 210,
-                height: 176,
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-          ),
-          Align(
-            alignment: const AlignmentDirectional(1, 1),
-            child: Container(
-              width: 59,
-              height: 59,
-              decoration: const BoxDecoration(
-                color: Color(0xFFFFCC68),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(0),
-                  bottomRight: Radius.circular(borderRadius),
-                  topLeft: Radius.circular(borderRadius),
-                  topRight: Radius.circular(0),
-                ),
-              ),
-              child: const Align(
-                alignment: AlignmentDirectional(0, 0),
-                child: Icon(
-                  Icons.add_box_outlined,
-                  color: Colors.white,
-                  size: 35,
-                ),
-              ),
-            ),
-          ),
-          Align(
-            alignment: const AlignmentDirectional(-1, 1),
-            child: Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 10),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 8),
-                    child: Text(
-                      'Wortel',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Text('Rp. 25.000'),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+    return const RoundedProductContainer(
+      name: 'Wortel',
+      price: '12.000',
     );
   }
 

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 class FeatureGridModel {
-  IconData icon;
-  String title;
+  final IconData icon;
+  final String title;
+  final String page;
 
-  FeatureGridModel({
-    required this.icon,
-    required this.title,
+  const FeatureGridModel({
+    this.icon = Icons.broken_image,
+    this.title = '',
+    this.page = '',
   });
 }

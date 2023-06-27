@@ -1,12 +1,16 @@
-import '../ui.dart';
+import 'package:flutter/material.dart';
+
+import '../const/colors_constants.dart';
 
 class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
   final bool isHome;
   final String title;
+  final bool enableAction;
   const AppBarWidget({
     super.key,
     required this.isHome,
     required this.title,
+    this.enableAction = true,
   });
 
   @override
@@ -35,15 +39,19 @@ class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
       elevation: 0.0,
       centerTitle: (isHome) ? false : true,
       actions: [
-        // Notification bell icon
-        Padding(
-          padding: const EdgeInsets.only(right: 24.0),
-          child: Icon(
-            Icons.notifications,
-            color:
-                isHome ? ColorConstants.brownColor : ColorConstants.blackColor,
-          ),
-        )
+        (enableAction)
+            ?
+            // Notification bell icon
+            Padding(
+                padding: const EdgeInsets.only(right: 24.0),
+                child: Icon(
+                  Icons.notifications,
+                  color: isHome
+                      ? ColorConstants.brownColor
+                      : ColorConstants.blackColor,
+                ),
+              )
+            : Container()
       ],
       title: Text(
         title,

@@ -1,4 +1,5 @@
-import 'package:common/common.dart';
+import 'package:common/cubit/cubit_state.dart';
+import 'package:dependencies/bloc/bloc.dart';
 
 import 'model/product_list_model.dart';
 

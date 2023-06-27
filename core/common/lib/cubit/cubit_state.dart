@@ -1,6 +1,5 @@
+import 'package:dependencies/equatable/equatable.dart';
 import 'package:flutter/material.dart';
-
-import '../common.dart';
 
 @immutable
 abstract class CubitState extends Equatable {}

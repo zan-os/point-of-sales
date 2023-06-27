@@ -1,5 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:home/data/model/feature_grid_model.dart';
-import 'package:ui/ui.dart';
+import 'package:ui/const/colors_constants.dart';
+import 'package:ui/drawable/rounded_white_drawable.dart';
+import 'package:ui/drawable/rounded_yellow_drawable.dart';
+import 'package:ui/widgets/app_bar_widget.dart';
+import 'package:ui/widgets/pending_action_tile_widget.dart';
+import 'package:ui/widgets/statistic_data_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -46,6 +52,7 @@ class HomeScreen extends StatelessWidget {
   Widget _buildPendingActionTile() {
     return RoundedContainerDrawable(
       padding: 16.0,
+      onTap: () {},
       child: ListView(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
@@ -77,13 +84,31 @@ class HomeScreen extends StatelessWidget {
   GridView _buildGridView() {
     // Dummy features data
     final List<FeatureGridModel> gridItem = [
-      FeatureGridModel(icon: Icons.add_box_outlined, title: 'Add Product'),
-      FeatureGridModel(icon: Icons.add_business_outlined, title: 'Add Outlet'),
-      FeatureGridModel(
-          icon: Icons.stacked_bar_chart_outlined, title: 'Add Stock'),
-      FeatureGridModel(icon: Icons.view_list_sharp, title: 'List Order'),
-      FeatureGridModel(icon: Icons.receipt_long_outlined, title: 'Report'),
-      FeatureGridModel(icon: Icons.person_pin_outlined, title: 'Absen'),
+      const FeatureGridModel(
+        icon: Icons.add_box_outlined,
+        title: 'Add Product',
+        page: '/add-product',
+      ),
+      const FeatureGridModel(
+        icon: Icons.add_business_outlined,
+        title: 'Add Outlet',
+      ),
+      const FeatureGridModel(
+        icon: Icons.stacked_bar_chart_outlined,
+        title: 'Add Stock',
+      ),
+      const FeatureGridModel(
+        icon: Icons.view_list_sharp,
+        title: 'List Order',
+      ),
+      const FeatureGridModel(
+        icon: Icons.receipt_long_outlined,
+        title: 'Report',
+      ),
+      const FeatureGridModel(
+        icon: Icons.person_pin_outlined,
+        title: 'Absen',
+      ),
     ];
 
     return GridView.builder(
@@ -98,7 +123,11 @@ class HomeScreen extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: RoundedContainerDrawable(
-            onTap: () {},
+            onTap: () {
+              if (item.page.isNotEmpty) {
+                Navigator.pushNamed(context, item.page);
+              }
+            },
             padding: 0.0,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -126,8 +155,9 @@ class HomeScreen extends StatelessWidget {
 
   // Showing statistic data
   Widget _buildStatisticData() {
-    return const RoundedContainerDrawable(
-      child: StatisticDataWidget(
+    return RoundedContainerDrawable(
+      onTap: () {},
+      child: const StatisticDataWidget(
         // Set amount of statistic data from here
         tOrder: 15,
         tDistribution: 7,

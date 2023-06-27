@@ -1,14 +1,18 @@
-import '../ui.dart';
+import 'package:flutter/material.dart';
+import 'package:ui/const/colors_constants.dart';
+
+import '../drawable/rounded_white_drawable.dart';
 
 class SearchBarWidget extends StatelessWidget {
   const SearchBarWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const RoundedContainerDrawable(
+    return RoundedContainerDrawable(
       radius: 50.0,
       padding: 0.0,
-      child: TextField(
+      onTap: () {},
+      child: const TextField(
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(

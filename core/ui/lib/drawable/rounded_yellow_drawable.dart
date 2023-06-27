@@ -1,4 +1,5 @@
-import '../ui.dart';
+import 'package:flutter/material.dart';
+import 'package:ui/const/colors_constants.dart';
 
 class RoundedYellowDrawable extends StatelessWidget {
   const RoundedYellowDrawable({

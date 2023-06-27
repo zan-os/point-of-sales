@@ -1,29 +1,16 @@
-import 'package:ui/ui.dart';
+import 'package:flutter/material.dart';
+import 'package:ui/const/colors_constants.dart';
+import 'package:ui/widgets/round_bordered_text_field.dart';
+import 'package:ui/widgets/rounded_button_widget.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
-
-  @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  final unfocusNode = FocusNode();
-  FocusNode? unfocuseNode;
-  // State field(s) for yourName widget.
-  TextEditingController? yourNameController;
-  String? Function(BuildContext, String?)? yourNameControllerValidator;
-  // State field(s) for city widget.
-  TextEditingController? cityController;
-  String? Function(BuildContext, String?)? cityControllerValidator;
-  // State field(s) for state widget.
-  String? stateValue;
-  // State field(s) for myBio widget.
-  TextEditingController? myBioController;
-  String? Function(BuildContext, String?)? myBioControllerValidator;
+class ProfileScreen extends StatelessWidget {
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final unfocusNode = FocusNode();
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
       child: Scaffold(
@@ -61,31 +48,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildLogoutButton() {
     return RoundedButtonWidget(
       title: 'Sign Out',
-      onTap: () => Navigator.pop(context),
+      onTap: () => navigatorKey.currentState?.popAndPushNamed('/auth'),
     );
   }
 
   Padding _buildProfileForm({String label = '-'}) {
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
-      child: TextFormField(
+      child: RoundBorderedTextFIeld(onChange: (p0) {
+        
+      },
         enabled: false,
-        controller: yourNameController,
-        obscureText: false,
-        decoration: InputDecoration(
-          labelText: label,
-          disabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Color(0xFFF1F4F8),
-              width: 2,
-            ),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsetsDirectional.fromSTEB(20, 24, 0, 24),
-        ),
-        maxLines: null,
+        label: label,
       ),
     );
   }

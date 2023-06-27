@@ -1,0 +1,1 @@
+export 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';

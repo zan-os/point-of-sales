@@ -1,6 +1,6 @@
-import 'package:point_of_sales/presentation/ui/shell_screen.dart';
-import 'package:product_list/product_list.dart';
-import 'package:ui/ui.dart';
+import 'package:common/navigation/app_router.dart';
+import 'package:flutter/material.dart';
+import 'package:ui/widgets/rounded_button_widget.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -18,11 +18,6 @@ class _AuthScreenState extends State<AuthScreen> {
   // State field(s) for password widget.
   TextEditingController? passwordController;
   String? Function(BuildContext, String?)? passwordControllerValidator;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -101,7 +96,9 @@ class _AuthScreenState extends State<AuthScreen> {
                                       child: TextFormField(
                                         controller: emailAddressController,
                                         autofocus: true,
-                                        autofillHints: [AutofillHints.email],
+                                        autofillHints: const [
+                                          AutofillHints.email
+                                        ],
                                         obscureText: false,
                                         decoration: InputDecoration(
                                           labelText: 'Email',
@@ -155,7 +152,9 @@ class _AuthScreenState extends State<AuthScreen> {
                                       child: TextFormField(
                                         controller: passwordController,
                                         autofocus: true,
-                                        autofillHints: [AutofillHints.password],
+                                        autofillHints: const [
+                                          AutofillHints.password
+                                        ],
                                         decoration: InputDecoration(
                                           labelText: 'Password',
                                           enabledBorder: OutlineInputBorder(
@@ -212,13 +211,9 @@ class _AuthScreenState extends State<AuthScreen> {
                                         const EdgeInsetsDirectional.fromSTEB(
                                             0, 0, 0, 16),
                                     child: RoundedButtonWidget(
-                                      onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ShellScreen(),
-                                        ),
-                                      ),
+                                      onTap: () =>
+                                          Navigator.pushReplacementNamed(
+                                              context, AppRouter.main),
                                       title: 'Sign In',
                                     ),
                                   ),

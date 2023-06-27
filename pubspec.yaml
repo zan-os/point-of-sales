@@ -11,19 +11,20 @@ dependencies:
   flutter:
     sdk: flutter
 
-  fluid_bottom_nav_bar: ^1.4.0
-
-  home:
-    path: features/home
-
-  product_list:
-    path: features/product_list
-
   auth:
     path: features/auth
 
-  profile:
-    path: features/profile
+  bottom_navigation:
+    path: features/bottom_navigation
+
+  add_product:
+    path: features/add_product
+
+  common:
+    path: core/common
+
+  ui:
+    path: core/ui
 
 dev_dependencies:
   flutter_test:

@@ -1,26 +1,26 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:home/home.dart';
+import 'package:home/presentation/ui/home_screen.dart';
 import 'package:product_list/product_list.dart';
-import 'package:profile/profile.dart';
+import 'package:profile/presentation/ui/profile_screen.dart';
 
-import '../widgets/fluid_nav_bar.dart';
+import '../widgets/fluid_bottom_navbar.dart';
 
-class ShellScreen extends StatefulWidget {
-  const ShellScreen({super.key});
+class BottomNavigationScreen extends StatefulWidget {
+  const BottomNavigationScreen({super.key});
 
   @override
-  State<ShellScreen> createState() => _ShellScreenState();
+  State<BottomNavigationScreen> createState() => _BottomNavigationScreenState();
 }
 
-class _ShellScreenState extends State<ShellScreen> {
+class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   Widget? _child;
   int _selectedIndex = 0;
 
   @override
   void initState() {
-    _child = HomeScreen();
+    _child = const HomeScreen();
     super.initState();
   }
 
@@ -46,7 +46,7 @@ class _ShellScreenState extends State<ShellScreen> {
         switch (index) {
           case 0:
             log('ojan 0');
-            _child = HomeScreen();
+            _child = const HomeScreen();
             _selectedIndex = index;
             break;
           case 1:
@@ -58,7 +58,7 @@ class _ShellScreenState extends State<ShellScreen> {
             break;
           case 2:
             log('ojan 2');
-            _child = ProductListScreen();
+            _child = const ProductListScreen();
             _selectedIndex = index;
             break;
           case 3:

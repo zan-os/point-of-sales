@@ -1,6 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';
-import 'package:ui/ui.dart';
+import 'package:dependencies/fluid_bottom_navigation_bar/fluid_bottom_navigation_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:ui/const/colors_constants.dart';
 
 class FluidBottomNavigationBar extends StatelessWidget {
   final Function onChange;

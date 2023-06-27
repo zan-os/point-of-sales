@@ -5,20 +5,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "point_of_sales",
+            "name": "point_of_sales (Debug)",
+            "type": "dart",
             "request": "launch",
-            "type": "dart"
+            "program": "lib/main.dart"
         },
         {
-            "name": "point_of_sales (profile mode)",
-            "request": "launch",
+            "name": "point_of_sales (Profile)",
             "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
             "flutterMode": "profile"
         },
         {
-            "name": "point_of_sales (release mode)",
-            "request": "launch",
+            "name": "point_of_sales (Release)",
             "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
             "flutterMode": "release"
         }
     ]

@@ -1,4 +1,6 @@
-import '../ui.dart';
+import 'package:flutter/material.dart';
+
+import '../const/colors_constants.dart';
 
 class PendingActionTileWidget extends StatelessWidget {
   final String? title;
