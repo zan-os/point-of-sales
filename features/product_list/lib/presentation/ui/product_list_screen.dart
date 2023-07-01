@@ -1,54 +1,100 @@
 import 'dart:developer';
 
+import 'package:common/model/categories_model.dart';
+import 'package:common/utils/cubit_state.dart';
+import 'package:dependencies/bloc/bloc.dart';
+import 'package:dependencies/loading_animation/loading_animation.dart';
 import 'package:flutter/material.dart';
+import 'package:product_list/presentation/cubit/product_list_cubit.dart';
+import 'package:product_list/presentation/cubit/product_list_state.dart';
 import 'package:ui/const/colors_constants.dart';
 import 'package:ui/widgets/app_bar_widget.dart';
 import 'package:ui/widgets/rounded_product_container.dart';
 import 'package:ui/widgets/search_bar_widget.dart';
 
-class ProductListScreen extends StatefulWidget {
-  const ProductListScreen({Key? key}) : super(key: key);
+import '../../data/model/product_list_model.dart';
+
+class ProductListScreen extends StatelessWidget {
+  const ProductListScreen({super.key});
 
   @override
-  ProductListScreenState createState() => ProductListScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider<ProductListCubit>(
+      create: (context) => ProductListCubit(),
+      child: const _ProductListContent(),
+    );
+  }
 }
 
-class ProductListScreenState extends State<ProductListScreen> {
+class _ProductListContent extends StatefulWidget {
+  const _ProductListContent({Key? key}) : super(key: key);
+
+  @override
+  _ProductListContentState createState() => _ProductListContentState();
+}
+
+class _ProductListContentState extends State<_ProductListContent> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final unfocusNode = FocusNode();
   final backgroundColor = Colors.grey[20];
   final categories = ['All', 'Vegetable', 'Fruit', 'Seafood', 'Meat', 'Drinks'];
+  late ProductListCubit cubit;
 
-  TextEditingController? _searchController;
+  late TextEditingController _searchController;
 
   int? categoryIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    Future.delayed(Duration.zero).then((value) => cubit.init());
     _searchController = TextEditingController();
   }
 
   @override
+  void didChangeDependencies() {
+    cubit = context.read<ProductListCubit>();
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
-    _searchController?.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
   Widget _buildBody() {
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-      child: Column(
-        children: [
-          _buildSearchAndFilter(),
-          _buildCategoryList(),
-          _buildProductGrid(),
-        ],
+      child: BlocConsumer<ProductListCubit, ProductListState>(
+        listener: (context, state) {
+          if (state.status == CubitState.loading) {
+            log('called');
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) =>
+                  LoadingAnimationWidget.inkDrop(color: Colors.white, size: 50),
+            );
+          }
+          if (state.status == CubitState.finishLoading) {
+            Navigator.pop(context);
+          }
+        },
+        builder: (context, state) => Column(
+          children: [
+            _buildSearchAndFilter(),
+            if (state.status == CubitState.hasData) ...[
+              _buildCategoryList(categories: state.categories),
+              _buildProductGrid(productList: state.productList),
+            ]
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildProductGrid() {
+  Widget _buildProductGrid({required List<ProductListModel> productList}) {
     return Expanded(
       child: GridView.builder(
         padding: EdgeInsets.zero,
@@ -60,22 +106,25 @@ class ProductListScreenState extends State<ProductListScreen> {
           childAspectRatio: 4 / 4.6,
         ),
         shrinkWrap: true,
-        itemCount: 11,
+        itemCount: productList.length,
         itemBuilder: (context, index) {
-          return _buildProductItem(context);
+          final product = productList[index];
+          return _buildProductItem(context: context, product: product);
         },
       ),
     );
   }
 
-  Widget _buildProductItem(BuildContext context) {
-    return const RoundedProductContainer(
-      name: 'Wortel',
-      price: '12.000',
+  Widget _buildProductItem(
+      {required BuildContext context, required ProductListModel product}) {
+    return RoundedProductContainer(
+      name: product.name,
+      price: product.price.toString(),
+      image: product.image,
     );
   }
 
-  Widget _buildCategoryList() {
+  Widget _buildCategoryList({required List<CategoryModel> categories}) {
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
       child: Container(
@@ -89,18 +138,23 @@ class ProductListScreenState extends State<ProductListScreen> {
           itemCount: categories.length,
           itemBuilder: (context, index) {
             final category = categories[index];
-            return _buildCategoryItem(index: index, name: category);
+            return _buildCategoryItem(
+              index: index,
+              name: category.name,
+              categoryId: category.id,
+            );
           },
         ),
       ),
     );
   }
 
-  Widget _buildCategoryItem({int index = 0, String? name}) {
+  Widget _buildCategoryItem({int index = 0, String? name, int? categoryId}) {
     const double horizontalPadding = 10.0;
     const double verticalPadding = 6.0;
     return GestureDetector(
       onTap: () {
+        cubit.fetchByCategory(categoryId: categoryId ?? 0);
         setState(() {
           categoryIndex = index;
         });
@@ -149,40 +203,20 @@ class ProductListScreenState extends State<ProductListScreen> {
         mainAxisSize: MainAxisSize.max,
         children: [
           _buildSearchWidget(),
-          _buildFilterButton(),
         ],
       ),
     );
   }
 
-  Widget _buildFilterButton() {
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
-      child: Material(
-        color: Colors.transparent,
-        elevation: 1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Container(
-          width: 45,
-          height: 45,
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFCC68),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: const Icon(
-            Icons.tune_rounded,
-            color: Colors.white,
-            size: 24,
-          ),
-        ),
+  Widget _buildSearchWidget() {
+    return Expanded(
+      child: SearchBarWidget(
+        controller: _searchController,
+        onTap: (value) => cubit.fetchByName(name: value),
+        onChanged: (value) => cubit.setSearchedProduct(searchedProduct: value),
+        onSubmitted: (value) => cubit.fetchByName(name: value),
       ),
     );
-  }
-
-  Widget _buildSearchWidget() {
-    return const Expanded(child: SearchBarWidget());
   }
 
   @override
@@ -192,7 +226,8 @@ class ProductListScreenState extends State<ProductListScreen> {
       child: Scaffold(
         appBar: const AppBarWidget(
           isHome: false,
-          title: 'Product',enableLeading: false,
+          title: 'Product',
+          enableLeading: false,
         ),
         key: scaffoldKey,
         backgroundColor: backgroundColor,

@@ -7,7 +7,9 @@ import 'package:ui/widgets/rounded_button_widget.dart';
 
 class ProfileScreen extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  ProfileScreen({super.key});
+  final String email;
+  final String role;
+  ProfileScreen({super.key, required this.email, required this.role});
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +54,8 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
-            _buildProfileForm(label: 'Fauzan'),
-            _buildProfileForm(label: 'Kasir'),
+            _buildProfileForm(label: email),
+            _buildProfileForm(label: role),
             _buildLogoutButton(),
           ],
         ),

@@ -4,7 +4,16 @@ import 'package:ui/const/colors_constants.dart';
 import '../drawable/rounded_white_drawable.dart';
 
 class SearchBarWidget extends StatelessWidget {
-  const SearchBarWidget({super.key});
+  final Function(String) onSubmitted;
+  final Function(String) onTap;
+  final Function(String) onChanged;
+  final TextEditingController controller;
+  const SearchBarWidget({
+    super.key,
+    required this.onSubmitted,
+    required this.onTap,
+    required this.controller, required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,9 +21,12 @@ class SearchBarWidget extends StatelessWidget {
       radius: 50.0,
       padding: 0.0,
       onTap: () {},
-      child: const TextField(
+      child: TextField(
+        onSubmitted: (value) => onSubmitted(value),
+        onChanged: (value) => onChanged(value),
+        controller: controller,
         decoration: InputDecoration(
-          border: OutlineInputBorder(
+          border: const OutlineInputBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(50.0),
             ),
@@ -23,14 +35,17 @@ class SearchBarWidget extends StatelessWidget {
           filled: true,
           fillColor: Colors.white,
           hintText: 'Search',
-          hintStyle: TextStyle(color: ColorConstants.greyColor),
+          hintStyle: const TextStyle(color: ColorConstants.greyColor),
           suffixIcon: Padding(
-            padding: EdgeInsets.only(right: 8.0),
-            child: CircleAvatar(
-              backgroundColor: ColorConstants.primaryYellow,
-              child: Icon(
-                Icons.search,
-                color: ColorConstants.whiteBackground,
+            padding: const EdgeInsets.only(right: 8.0),
+            child: GestureDetector(
+              onTap: () => onTap(controller.text.trim()),
+              child: const CircleAvatar(
+                backgroundColor: ColorConstants.primaryYellow,
+                child: Icon(
+                  Icons.search,
+                  color: ColorConstants.whiteBackground,
+                ),
               ),
             ),
           ),

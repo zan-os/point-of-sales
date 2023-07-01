@@ -5,11 +5,13 @@ import 'package:ui/const/colors_constants.dart';
 class FluidBottomNavigationBar extends StatelessWidget {
   final Function onChange;
   final int? selectedIndex;
+  final String role;
 
   const FluidBottomNavigationBar({
     Key? key,
     required this.onChange,
     required this.selectedIndex,
+    required this.role,
   }) : super(key: key);
 
   @override
@@ -18,39 +20,12 @@ class FluidBottomNavigationBar extends StatelessWidget {
       elevation: 15.0,
       child: FluidNavBar(
         icons: [
-          FluidNavBarIcon(
-              icon: Icons.home_outlined,
-              extras: {"label": "Home"},
-              backgroundColor: (selectedIndex == 0)
-                  ? ColorConstants.primaryYellow
-                  : ColorConstants.whiteBackground),
-          FluidNavBarIcon(
-              icon: Icons.library_books_outlined,
-              extras: {"label": "bookmark"},
-              backgroundColor: (selectedIndex == 1)
-                  ? ColorConstants.primaryYellow
-                  : ColorConstants.whiteBackground),
-          FluidNavBarIcon(
-            icon: Icons.shopping_bag_outlined,
-            extras: {"label": "partner"},
-            backgroundColor: (selectedIndex == 2)
-                ? ColorConstants.primaryYellow
-                : ColorConstants.whiteBackground,
-          ),
-          FluidNavBarIcon(
-            icon: Icons.shopping_cart_outlined,
-            extras: {"label": "conference"},
-            backgroundColor: (selectedIndex == 3)
-                ? ColorConstants.primaryYellow
-                : ColorConstants.whiteBackground,
-          ),
-          FluidNavBarIcon(
-            icon: Icons.person_outline_rounded,
-            extras: {"label": "conference"},
-            backgroundColor: (selectedIndex == 4)
-                ? ColorConstants.primaryYellow
-                : ColorConstants.whiteBackground,
-          ),
+          if (role == 'ADMIN')
+            ..._adminIcons()
+          else if (role == 'CASHIER')
+            ..._cashierIcon()
+          else
+            ...[],
         ],
         onChange: (selectedIndex) {
           onChange(selectedIndex);
@@ -67,5 +42,75 @@ class FluidBottomNavigationBar extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  List<FluidNavBarIcon> _adminIcons() {
+    return [
+      FluidNavBarIcon(
+          icon: Icons.home_outlined,
+          extras: {"label": "Home"},
+          backgroundColor: (selectedIndex == 0)
+              ? ColorConstants.primaryYellow
+              : ColorConstants.whiteBackground),
+      FluidNavBarIcon(
+          icon: Icons.library_books_outlined,
+          extras: {"label": "bookmark"},
+          backgroundColor: (selectedIndex == 1)
+              ? ColorConstants.primaryYellow
+              : ColorConstants.whiteBackground),
+      FluidNavBarIcon(
+        icon: Icons.shopping_bag_outlined,
+        extras: {"label": "partner"},
+        backgroundColor: (selectedIndex == 2)
+            ? ColorConstants.primaryYellow
+            : ColorConstants.whiteBackground,
+      ),
+      FluidNavBarIcon(
+        icon: Icons.shopping_cart_outlined,
+        extras: {"label": "conference"},
+        backgroundColor: (selectedIndex == 3)
+            ? ColorConstants.primaryYellow
+            : ColorConstants.whiteBackground,
+      ),
+      FluidNavBarIcon(
+        icon: Icons.person_outline_rounded,
+        extras: {"label": "conference"},
+        backgroundColor: (selectedIndex == 4)
+            ? ColorConstants.primaryYellow
+            : ColorConstants.whiteBackground,
+      ),
+    ];
+  }
+
+  List<FluidNavBarIcon> _cashierIcon() {
+    return [
+      FluidNavBarIcon(
+          icon: Icons.library_books_outlined,
+          extras: {"label": "bookmark"},
+          backgroundColor: (selectedIndex == 0)
+              ? ColorConstants.primaryYellow
+              : ColorConstants.whiteBackground),
+      FluidNavBarIcon(
+        icon: Icons.shopping_bag_outlined,
+        extras: {"label": "partner"},
+        backgroundColor: (selectedIndex == 1)
+            ? ColorConstants.primaryYellow
+            : ColorConstants.whiteBackground,
+      ),
+      FluidNavBarIcon(
+        icon: Icons.shopping_cart_outlined,
+        extras: {"label": "conference"},
+        backgroundColor: (selectedIndex == 2)
+            ? ColorConstants.primaryYellow
+            : ColorConstants.whiteBackground,
+      ),
+      FluidNavBarIcon(
+        icon: Icons.person_outline_rounded,
+        extras: {"label": "conference"},
+        backgroundColor: (selectedIndex == 3)
+            ? ColorConstants.primaryYellow
+            : ColorConstants.whiteBackground,
+      ),
+    ];
   }
 }

@@ -1,56 +1,111 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:add_product/presentation/cubit/add_product_cubit.dart';
+import 'package:add_product/presentation/cubit/add_product_state.dart';
+import 'package:common/model/categories_model.dart';
+import 'package:common/utils/cubit_state.dart';
+import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/image_manager/image_manager.dart';
+import 'package:dependencies/loading_animation/loading_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:ui/widgets/app_bar_widget.dart';
+import 'package:ui/widgets/category_picker.dart';
 import 'package:ui/widgets/round_bordered_text_field.dart';
 import 'package:ui/widgets/rounded_button_widget.dart';
 import 'package:ui/widgets/rounded_product_container.dart';
 
-class AddProductScreen extends StatefulWidget {
+class AddProductScreen extends StatelessWidget {
   const AddProductScreen({super.key});
 
   @override
-  State<AddProductScreen> createState() => _AddProductScreenState();
+  Widget build(BuildContext context) {
+    final FocusNode unfocusNode = FocusNode();
+    return BlocProvider<AddProductCubit>(
+      create: (context) => AddProductCubit(),
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
+        child: const AddProductContent(),
+      ),
+    );
+  }
 }
 
-class _AddProductScreenState extends State<AddProductScreen> {
-  final scaffoldKey = GlobalKey<ScaffoldState>();
-  final unfocusNode = FocusNode();
+class AddProductContent extends StatefulWidget {
+  const AddProductContent({
+    super.key,
+  });
+
+  @override
+  State<AddProductContent> createState() => _AddProductContentState();
+}
+
+class _AddProductContentState extends State<AddProductContent> {
   final nameController = TextEditingController();
+
   final priceController = TextEditingController();
+
   final stockController = TextEditingController();
 
-  String name = '-';
-  String price = '-';
+  final categoryController = TextEditingController();
+
+  String _name = '-';
+
+  String _price = '0';
 
   File? _image;
 
-  Future _pickImage(ImageSource source) async {
-    try {
-      final image = await ImagePicker().pickImage(source: source);
-      if (image == null) return;
-      File? img = File(image.path);
-      img = await _cropImage(sourcePath: img);
-      setState(() {
-        _image = img;
-      });
-    } catch (e) {
-      log('Pick Image Error ==> $e');
-    }
+  late AddProductCubit cubit;
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero).then((value) => cubit.fetchCategories());
+    super.initState();
   }
 
-  Future<File?> _cropImage({required File sourcePath}) async {
-    CroppedFile? croppedFile =
-        await ImageCropper().cropImage(sourcePath: sourcePath.path);
-    if (croppedFile == null) return null;
-    return File(croppedFile.path);
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    cubit = BlocProvider.of<AddProductCubit>(context, listen: false);
   }
 
-  void _showBottomSheet() {
-    scaffoldKey.currentState?.showBottomSheet((context) {
-      return Container(
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: const AppBarWidget(
+          isHome: false, title: 'Tambah Produk', enableAction: false),
+      backgroundColor: Colors.white,
+      body: BlocConsumer<AddProductCubit, AddProductState>(
+        listener: (context, state) {
+          log('state $state');
+          if (state.status == CubitState.hasData) {
+            log('set state');
+            setState(() {
+              _image = state.image;
+            });
+            Navigator.pop(context);
+          }
+          if (state.status == CubitState.loading) {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) =>
+                  LoadingAnimationWidget.inkDrop(color: Colors.white, size: 50),
+            );
+          }
+        },
+        builder: (context, state) {
+          return _buildBody();
+        },
+      ),
+    );
+  }
+
+  void _showImageSourcePicker() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -58,7 +113,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
           children: [
             RoundedButtonWidget(
               title: 'Gallery',
-              onTap: () => _pickImage(ImageSource.gallery),
+              onTap: () {
+                cubit.pickImage(ImageSource.gallery);
+                Navigator.pop(context);
+              },
             ),
             const SizedBox(
               height: 8.0,
@@ -69,25 +127,27 @@ class _AddProductScreenState extends State<AddProductScreen> {
             ),
             RoundedButtonWidget(
               title: 'Camera',
-              onTap: () => _pickImage(ImageSource.camera),
+              onTap: () {
+                cubit.pickImage(ImageSource.camera);
+                Navigator.pop(context);
+              },
             ),
           ],
         ),
-      );
-    });
+      ),
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
-      child: Scaffold(
-        key: scaffoldKey,
-        resizeToAvoidBottomInset: false,
-        appBar: const AppBarWidget(
-            isHome: false, title: 'Tambah Produk', enableAction: false),
-        backgroundColor: Colors.white,
-        body: _buildBody(),
+  void _showCategoryPicker({required List<CategoryModel> categories}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => CategoryPicker(
+        categories: categories,
+        onSelectButtonTap: (category) {
+          cubit.setSelectedCategory(categoryModel: category);
+          categoryController.text = category.name ?? '';
+        },
       ),
     );
   }
@@ -96,44 +156,18 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
+        child: ListView(
+          padding: MediaQuery.of(context).viewInsets,
+          shrinkWrap: true,
           children: [
             const SizedBox(
               height: 8.0,
             ),
-            Center(
-              child: Column(
-                children: [
-                  const Text(
-                    'Preview Product',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(
-                    height: 16.0,
-                  ),
-                  SizedBox(
-                    height: 200,
-                    width: 200,
-                    child: RoundedProductContainer(
-                      name: name,
-                      price: price,
-                      path: _image,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _buildPreviewCard(),
             const SizedBox(
               height: 16.0,
             ),
-            GestureDetector(
-              onTap: () => _showBottomSheet(),
-              child: const Text(
-                'Upload Foto',
-                style: TextStyle(color: Colors.blue),
-              ),
-            ),
+            _buildUploadTextButton(),
             const SizedBox(
               height: 16.0,
             ),
@@ -143,7 +177,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
               controller: nameController,
               onChange: (value) {
                 setState(() {
-                  name = value;
+                  _name = value;
                 });
               },
             ),
@@ -156,9 +190,24 @@ class _AddProductScreenState extends State<AddProductScreen> {
               controller: priceController,
               onChange: (value) {
                 setState(() {
-                  price = value;
+                  _price = value;
                 });
               },
+            ),
+            const SizedBox(
+              height: 16.0,
+            ),
+            BlocBuilder<AddProductCubit, AddProductState>(
+              builder: (context, state) => GestureDetector(
+                onTap: () {
+                  _showCategoryPicker(categories: state.categories);
+                },
+                child: RoundBorderedTextFIeld(
+                  enabled: false,
+                  label: 'Kategori Produk',
+                  controller: categoryController,
+                ),
+              ),
             ),
             const SizedBox(
               height: 16.0,
@@ -179,10 +228,55 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
+  GestureDetector _buildUploadTextButton() {
+    return GestureDetector(
+      onTap: () => _showImageSourcePicker(),
+      child: const SizedBox(
+        height: 25,
+        width: 100,
+        child: Center(
+          child: Text(
+            'Upload Foto',
+            style: TextStyle(color: Colors.blue),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Center _buildPreviewCard() {
+    return Center(
+      child: Column(
+        children: [
+          const Text(
+            'Preview Product',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(
+            height: 16.0,
+          ),
+          SizedBox(
+            height: 200,
+            width: 200,
+            child: RoundedProductContainer(
+              name: _name,
+              price: _price,
+              path: _image,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildAddButton() {
     return RoundedButtonWidget(
       title: 'Tambah Produk',
-      onTap: () {},
+      onTap: () => context.read<AddProductCubit>().uploadProduct(
+            name: nameController.text.trim(),
+            price: priceController.text.trim(),
+            stock: stockController.text.trim(),
+          ),
     );
   }
 }

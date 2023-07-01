@@ -1,35 +1,36 @@
 import 'dart:developer';
 
+import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 
-import '../cubit/cubit_state.dart';
-
-class StateHandler<T extends StateStreamable<CubitState>>
-    extends StatelessWidget {
-  final T stateStreamable;
-  final Function? onLoading, onComplete, onError;
-  final Widget onCompleteBuilder;
+class StateHandler<T extends StateStreamable<S>, S extends StateStreamable<S>> extends StatelessWidget {
+  final T cubit;
+  final S state;
+  final Function onLoadingListener, onCompleteListener, onError;
+  final Widget defaultBuilder;
+  final Widget? onCompleteBuilder;
 
   const StateHandler({
     super.key,
-    required this.stateStreamable,
-    this.onLoading,
-    this.onComplete,
-    this.onError,
-    required this.onCompleteBuilder,
+    required this.cubit,
+    required this.onLoadingListener,
+    required this.onCompleteListener,
+    required this.onError,
+    this.onCompleteBuilder,
+    required this.defaultBuilder, required this.state,
   });
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<T, CubitState>(
+    return BlocConsumer<T, S>(
       listener: listenerStateHandler,
       builder: builderStateHandler,
     );
   }
 
   Widget builderStateHandler(context, state) {
-    if (state is LoadingState) {
+    if (state == CubitState.loading) {
       log('ojan state ==> $state');
       log('loading bro');
       return const Center(
@@ -37,7 +38,7 @@ class StateHandler<T extends StateStreamable<CubitState>>
       );
     }
 
-    if (state is ErrorState) {
+    if (state == CubitState.error) {
       log('ojan state ==> $state');
       log('error bro');
       return Center(
@@ -45,13 +46,15 @@ class StateHandler<T extends StateStreamable<CubitState>>
       );
     }
 
-    if (state is CompleteState) {
+    if (state == CubitState.hasData) {
       log('ojan state ==> $state');
       log('success bro');
-      return onCompleteBuilder;
+      if (onCompleteBuilder != null) {
+        return onCompleteBuilder!;
+      }
     }
 
-    if (state is EmptyState) {
+    if (state == CubitState.noData) {
       log('ojan state ==> $state');
       log('empty bro');
       return Center(
@@ -59,28 +62,21 @@ class StateHandler<T extends StateStreamable<CubitState>>
       );
     }
 
-    return const Center(
-      child: Text('Error outside of State'),
-    );
+    return defaultBuilder;
   }
 
   void listenerStateHandler(context, state) {
-    if (state is LoadingState) {
-      if (onLoading != null) {
-        onLoading!();
-      }
+    if (state == CubitState.loading) {
+      onLoadingListener();
     }
 
-    if (state is ErrorState) {
-      if (onError != null) {
-        onError!();
-      }
+    if (state == CubitState.error) {
+      onError();
     }
 
-    if (state is CompleteState) {
-      if (onComplete != null) {
-        onComplete!();
-      }
+    if (state == CubitState.hasData) {
+      log('ojan data');
+      onCompleteListener;
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:common/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
 
 import '../drawable/rounded_white_drawable.dart';
@@ -52,7 +53,7 @@ class RoundedProductContainer extends StatelessWidget {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-            Text('Rp. ${price ?? '-'} '),
+            Text(formatRupiah(price ?? '0')),
           ],
         ),
       ),
@@ -96,7 +97,7 @@ class RoundedProductContainer extends StatelessWidget {
         ),
         child: (path == null)
             ? Image.network(
-                'https://picsum.photos/seed/418/600',
+                image ?? 'https://picsum.photos/seed/418/600',
                 width: 210,
                 height: 176,
                 fit: BoxFit.fitWidth,

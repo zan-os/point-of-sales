@@ -1,19 +1,44 @@
+import 'package:add_cashier/presentation/cubit/add_cahsier_cubit.dart';
+import 'package:add_cashier/presentation/cubit/add_cashier_state.dart';
+import 'package:common/utils/cubit_state.dart';
+import 'package:dependencies/bloc/bloc.dart';
+import 'package:dependencies/loading_animation/loading_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:ui/widgets/app_bar_widget.dart';
 import 'package:ui/widgets/round_bordered_text_field.dart';
 import 'package:ui/widgets/rounded_button_widget.dart';
 
-class AddCashierScreen extends StatefulWidget {
+class AddCashierScreen extends StatelessWidget {
   const AddCashierScreen({super.key});
 
   @override
-  State<AddCashierScreen> createState() => _AddCashierScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider<AddCashierCubit>(
+      create: (context) => AddCashierCubit(),
+      child: const AddCashierContent(),
+    );
+  }
 }
 
-class _AddCashierScreenState extends State<AddCashierScreen> {
+class AddCashierContent extends StatefulWidget {
+  const AddCashierContent({super.key});
+
+  @override
+  State<AddCashierContent> createState() => _AddCashierContentState();
+}
+
+class _AddCashierContentState extends State<AddCashierContent> {
   final unfocusNode = FocusNode();
-  final nameController = TextEditingController();
-  final roleController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  late AddCashierCubit cubit;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    cubit = context.read<AddCashierCubit>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,30 +58,50 @@ class _AddCashierScreenState extends State<AddCashierScreen> {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            const SizedBox(
-              height: 8.0,
-            ),
-            RoundBorderedTextFIeld(
-              enabled: true,
-              label: 'Nama Pegawai',
-              controller: nameController,
-            ),
-            const SizedBox(
-              height: 16.0,
-            ),
-            RoundBorderedTextFIeld(
-              enabled: true,
-              label: 'Role Pegawai',
-              controller: roleController,
-            ),
-            const SizedBox(
-              height: 16.0,
-            ),
-            _buildAddButton(),
-          ],
+        child: BlocConsumer<AddCashierCubit, AddCashierState>(
+          listener: (context, state) {
+            if (state.status == CubitState.loading) {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => LoadingAnimationWidget.inkDrop(
+                    color: Colors.white, size: 50),
+              );
+            }
+
+            if (state.status == CubitState.finishLoading) {
+              Navigator.pop(context);
+            }
+
+            if (state.status == CubitState.hasData) {
+              const SnackBar(content: Text('Berhasil menambahka pegawai baru'));
+            }
+          },
+          builder: (context, state) => Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              const SizedBox(
+                height: 8.0,
+              ),
+              RoundBorderedTextFIeld(
+                enabled: true,
+                label: 'Email Pegawai',
+                controller: emailController,
+              ),
+              const SizedBox(
+                height: 16.0,
+              ),
+              RoundBorderedTextFIeld(
+                enabled: true,
+                label: 'Password',
+                controller: passwordController,
+              ),
+              const SizedBox(
+                height: 16.0,
+              ),
+              _buildAddButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -65,7 +110,12 @@ class _AddCashierScreenState extends State<AddCashierScreen> {
   Widget _buildAddButton() {
     return RoundedButtonWidget(
       title: 'Tambah Pegawai',
-      onTap: () {},
+      onTap: () {
+        cubit.registerCashier(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+      },
     );
   }
 }
