@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:common/model/categories_model.dart';
+import 'package:common/model/product_model.dart';
 import 'package:common/utils/catch_error_logger.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/supabase/supabase.dart';
-import 'package:product_list/data/model/product_list_model.dart';
 import 'package:product_list/presentation/cubit/product_list_state.dart';
 
 class ProductListCubit extends Cubit<ProductListState> {
@@ -65,8 +65,7 @@ class ProductListCubit extends Cubit<ProductListState> {
       }
       final encoded = jsonEncode(response);
       final List decoded = jsonDecode(encoded);
-      final productList =
-          decoded.map((e) => ProductListModel.fromJson(e)).toList();
+      final productList = decoded.map((e) => ProductModel.fromJson(e)).toList();
 
       log(encoded);
       emit(state.copyWith(productList: productList));
@@ -95,64 +94,26 @@ class ProductListCubit extends Cubit<ProductListState> {
   void fetchByCategory({required int categoryId}) async {
     emit(state.copyWith(selectedCategoryId: categoryId.toString()));
     fetchProductList();
-    // log('$categoryId');
-    // if (categoryId == 0) {
-    //   fetchProductList();
-    // } else {
-    //   try {
-    //     final response = await _supabase
-    //         .from('product')
-    //         .select('*')
-    //         .filter('category_id', 'eq', '$categoryId');
-    //     final encoded = jsonEncode(response);
-    //     final List decoded = jsonDecode(encoded);
-    //     log(encoded);
-    //     final productList =
-    //         decoded.map((e) => ProductListModel.fromJson(e)).toList();
-
-    //     emit(state.copyWith(
-    //         status: CubitState.hasData, productList: productList));
-    //   } catch (e, stacktrace) {
-    //     catchErrorLogger(e, stacktrace);
-    //   }
-    // }
   }
 
   void fetchByName({required String name}) async {
     emit(state.copyWith(searchedProduct: name));
     fetchProductList();
-    // log(name);
-    // if (name.isEmpty) {
-    //   return;
-    // } else {
-    //   try {
-    //     /// Search data conatined [name] value
-    //     final response = await _supabase.from('product').select('*').filter(
-    //           'name',
-    //           'like',
-    //           '%$name%',
-    //         );
-    //     final encoded = jsonEncode(response);
-    //     final List decoded = jsonDecode(encoded);
-    //     log(encoded);
-    //     final productList =
-    //         decoded.map((e) => ProductListModel.fromJson(e)).toList();
-
-    //     // If Search resut is empty it will emitting no data state
-    //     if (productList.isEmpty) {
-    //       emit(state.copyWith(status: CubitState.noData));
-    //       return;
-    //     }
-
-    //     emit(state.copyWith(
-    //         status: CubitState.hasData, productList: productList));
-    //   } catch (e, stacktrace) {
-    //     catchErrorLogger(e, stacktrace);
-    //   }
-    // }
   }
 
   void setSearchedProduct({required String searchedProduct}) {
     emit(state.copyWith(searchedProduct: searchedProduct));
+  }
+
+  void addToCart({required ProductModel product}) async {
+    try {
+      final response = await _supabase.rpc(
+        'add_to_cart',
+        params: {'p_product_id': product.id, 'p_product_price': product.price},
+      );
+      log('$response');
+    } catch (e, stacktrace) {
+      catchErrorLogger(e, stacktrace);
+    }
   }
 }

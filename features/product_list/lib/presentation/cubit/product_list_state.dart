@@ -1,13 +1,13 @@
 import 'package:common/model/categories_model.dart';
+import 'package:common/model/product_model.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/equatable/equatable.dart';
-import 'package:product_list/data/model/product_list_model.dart';
 
 class ProductListState extends Equatable {
   final CubitState status;
   final String selectedCategoryId;
   final String searchedProduct;
-  final List<ProductListModel> productList;
+  final List<ProductModel> productList;
   final List<CategoryModel> categories;
 
   const ProductListState({
@@ -22,7 +22,7 @@ class ProductListState extends Equatable {
       {CubitState? status,
       String? selectedCategoryId,
       String? searchedProduct,
-      List<ProductListModel>? productList,
+      List<ProductModel>? productList,
       List<CategoryModel>? categories}) {
     return ProductListState(
       status: status ?? this.status,

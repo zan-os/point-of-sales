@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:common/model/categories_model.dart';
+import 'package:common/model/product_model.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/loading_animation/loading_animation.dart';
@@ -11,8 +12,6 @@ import 'package:ui/const/colors_constants.dart';
 import 'package:ui/widgets/app_bar_widget.dart';
 import 'package:ui/widgets/rounded_product_container.dart';
 import 'package:ui/widgets/search_bar_widget.dart';
-
-import '../../data/model/product_list_model.dart';
 
 class ProductListScreen extends StatelessWidget {
   const ProductListScreen({super.key});
@@ -94,7 +93,7 @@ class _ProductListContentState extends State<_ProductListContent> {
     );
   }
 
-  Widget _buildProductGrid({required List<ProductListModel> productList}) {
+  Widget _buildProductGrid({required List<ProductModel> productList}) {
     return Expanded(
       child: GridView.builder(
         padding: EdgeInsets.zero,
@@ -116,11 +115,14 @@ class _ProductListContentState extends State<_ProductListContent> {
   }
 
   Widget _buildProductItem(
-      {required BuildContext context, required ProductListModel product}) {
+      {required BuildContext context, required ProductModel product}) {
     return RoundedProductContainer(
       name: product.name,
       price: product.price.toString(),
       image: product.image,
+      addButtonTap: () {
+        cubit.addToCart(product: product);
+      },
     );
   }
 

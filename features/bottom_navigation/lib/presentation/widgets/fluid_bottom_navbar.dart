@@ -30,7 +30,7 @@ class FluidBottomNavigationBar extends StatelessWidget {
         onChange: (selectedIndex) {
           onChange(selectedIndex);
         },
-        animationFactor: 1.5,
+        animationFactor: 0.3,
         style: const FluidNavBarStyle(
             iconUnselectedForegroundColor: ColorConstants.greyColor,
             barBackgroundColor: ColorConstants.whiteBackground,

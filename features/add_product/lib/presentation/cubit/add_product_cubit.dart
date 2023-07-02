@@ -77,17 +77,21 @@ class AddProductCubit extends Cubit<AddProductState> {
             fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
           );
 
-      await _supabase.from('product').insert({
+      final product = await _supabase.from('product').insert({
         'name': name,
         'price': price,
-        'qty': stock,
+        // 'qty': stock,
         'category_id': state.selectedCategory?.id ?? 1,
         'image':
             'https://qfcfviouxxtwfutjzbxw.supabase.co/storage/v1/object/public/pos/$imagePath'
-      });
+      }).select();
+
+      await _supabase.from('stock').insert(
+        {'product_id': product[0]['id'], 'qty': stock},
+      );
 
       emit(state.copyWith(status: CubitState.hasData));
-      log('image ==> $imagePath');
+      log('porduct ==> $product[0]["id"]');
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
     }

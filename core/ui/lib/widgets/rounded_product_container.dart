@@ -10,12 +10,14 @@ class RoundedProductContainer extends StatelessWidget {
   final File? path;
   final String? name;
   final String? price;
+  final Function? addButtonTap;
   const RoundedProductContainer({
     super.key,
     this.image,
     this.name,
     this.price,
     this.path,
+    this.addButtonTap,
   });
 
   @override
@@ -63,24 +65,31 @@ class RoundedProductContainer extends StatelessWidget {
   Align _buildAddButton(double borderRadius) {
     return Align(
       alignment: const AlignmentDirectional(1, 1),
-      child: Container(
-        width: 59,
-        height: 59,
-        decoration: BoxDecoration(
-          color: const Color(0xFFFFCC68),
-          borderRadius: BorderRadius.only(
-            bottomLeft: const Radius.circular(0),
-            bottomRight: Radius.circular(borderRadius),
-            topLeft: Radius.circular(borderRadius),
-            topRight: const Radius.circular(0),
+      child: GestureDetector(
+        onTap: () {
+          if (addButtonTap != null) {
+            addButtonTap!();
+          }
+        },
+        child: Container(
+          width: 59,
+          height: 59,
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFCC68),
+            borderRadius: BorderRadius.only(
+              bottomLeft: const Radius.circular(0),
+              bottomRight: Radius.circular(borderRadius),
+              topLeft: Radius.circular(borderRadius),
+              topRight: const Radius.circular(0),
+            ),
           ),
-        ),
-        child: const Align(
-          alignment: AlignmentDirectional(0, 0),
-          child: Icon(
-            Icons.add_box_outlined,
-            color: Colors.white,
-            size: 35,
+          child: const Align(
+            alignment: AlignmentDirectional(0, 0),
+            child: Icon(
+              Icons.add_box_outlined,
+              color: Colors.white,
+              size: 35,
+            ),
           ),
         ),
       ),
