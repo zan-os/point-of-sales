@@ -5,6 +5,8 @@ import 'package:bottom_navigation/presentation/ui/bottom_navigation.dart';
 import 'package:common/navigation/app_router.dart';
 import 'package:dependencies/supabase/supabase.dart';
 import 'package:flutter/material.dart';
+import 'package:transaction/presentation/ui/transaction/transaction_screen.dart';
+import 'package:transaction/presentation/ui/transaction_detail/transaction_detail_screen.dart';
 
 import 'presentation/theme/app_theming.dart';
 
@@ -32,6 +34,8 @@ class MyApp extends StatelessWidget {
         AppRouter.addProduct: (context) => AddProductScreen(),
         AppRouter.auth: (context) => AuthScreen(),
         AppRouter.addCashier: (context) => AddCashierScreen(),
+        AppRouter.transaction: (context) => TransactionScreen(),
+        AppRouter.transactionDetail: (context) => TransactionDetailScreen(),
       },
     );
   }

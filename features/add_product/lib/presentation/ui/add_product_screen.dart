@@ -296,7 +296,7 @@ class _AddProductContentState extends State<AddProductContent> {
   Widget _buildAddButton() {
     return RoundedButtonWidget(
       title: 'Tambah Produk',
-      onTap: () => (_isFieldReady())
+      onTap: () => (_formValidator())
           ? context.read<AddProductCubit>().uploadProduct(
                 name: nameController.text.trim(),
                 price: priceController.text.trim(),
@@ -306,7 +306,7 @@ class _AddProductContentState extends State<AddProductContent> {
     );
   }
 
-  bool _isFieldReady() {
+  bool _formValidator() {
     final name = nameController.text.trim();
     final price = priceController.text.trim();
     final stock = stockController.text.trim();

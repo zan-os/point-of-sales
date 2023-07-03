@@ -23,6 +23,9 @@ dependencies:
   add_cashier:
     path: features/add_cashier
 
+  transaction:
+    path: features/transaction
+
   common:
     path: core/common
 

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:cart/presentation/bloc/cart_state.dart';
 import 'package:common/utils/catch_error_logger.dart';
@@ -23,13 +22,13 @@ class CartCubit extends Cubit<CartState> {
       await _supabase
           .from('cart')
           .select('''id, cart_qty, product_price, total_price,
-    product:product_id (*)''').then(
-              (response) {
+    product:product_id (*)''').then((response) {
         final encoded = jsonEncode(response);
         final List decoded = jsonDecode(encoded);
         final cartDetail = decoded.map((e) => CartModel.fromJson(e)).toList();
 
-        emit(state.copyWith(cartDetail: cartDetail));
+        emit(
+            state.copyWith(status: CubitState.initial, cartDetail: cartDetail));
 
         if (cartDetail.isNotEmpty) {
           getTotalBill();
@@ -37,22 +36,18 @@ class CartCubit extends Cubit<CartState> {
       });
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
-      emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(
           status: CubitState.error, message: 'Gagal mendapatkan kategori'));
     }
   }
 
   void getTotalBill() async {
-    emit(state.copyWith(status: CubitState.loading));
     try {
       final totalBill = await _supabase.rpc('get_total_bill').select();
-      emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(
-          status: CubitState.hasData, totalBill: int.parse(totalBill)));
+          status: CubitState.initial, totalBill: int.parse(totalBill)));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
-      emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(
           status: CubitState.error, message: 'Gagal mendapatkan total bill'));
     }
@@ -64,20 +59,23 @@ class CartCubit extends Cubit<CartState> {
       final userId = _supabase.auth.currentUser?.id;
       await _supabase.rpc('add_transaction', params: {
         'p_transaction_status': 1,
-        'p_received_payment_total': 200000,
-        'p_telephone': 0821122651231,
-        'p_address': 'Gurame street',
         'p_user_id': userId,
-        'p_table': 8
-      }).then((value) async {
-        log('tra id $value');
+      }).then((createdTransactionId) async {
         await _supabase.rpc(
           'add_transaction_detail',
-          params: {'p_transaction_id': value},
+          params: {'p_transaction_id': createdTransactionId},
         );
 
-        emit(state.copyWith(status: CubitState.finishLoading));
-        emit(state.copyWith(status: CubitState.initial));
+        emit(state.copyWith(
+            status: CubitState.finishLoading,
+            createdTransactionId: createdTransactionId));
+        emit(state.copyWith(
+            status: CubitState.success,
+            createdTransactionId: createdTransactionId));
+        emit(state.copyWith(
+            status: CubitState.initial,
+            cartDetail: List.empty(),
+            totalBill: 0));
       });
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);

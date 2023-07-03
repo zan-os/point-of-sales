@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cart/presentation/bloc/cart_cubit.dart';
 import 'package:cart/presentation/bloc/cart_state.dart';
+import 'package:common/navigation/app_router.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:common/utils/currency_formatter.dart';
 import 'package:dependencies/bloc/bloc.dart';
@@ -11,9 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:ui/const/colors_constants.dart';
 import 'package:ui/helper/show_snackbar.dart';
 import 'package:ui/widgets/app_bar_widget.dart';
+import 'package:ui/widgets/product_list_tile.dart';
 import 'package:ui/widgets/rounded_button_widget.dart';
-
-import '../widgets/product_list_tile.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -82,6 +82,21 @@ class _CartScreenContentState extends State<CartScreenContent> {
                 showSnackBar(state.message, isError: true),
               );
             }
+            if (state.status == CubitState.success) {
+              (state.createdTransactionId != 0)
+                  ? Navigator.pushNamed(
+                      context,
+                      AppRouter.transaction,
+                      arguments: {
+                        'transaction_id': state.createdTransactionId,
+                        'total_bill': state.totalBill
+                      },
+                    ).then((value) => cubit.fetchCart())
+                  : ScaffoldMessenger.of(context).showSnackBar(
+                      showSnackBar('Gagal mendapatkan id transaksi',
+                          isError: true),
+                    );
+            }
           },
           builder: (context, state) {
             return SingleChildScrollView(
@@ -104,17 +119,19 @@ class _CartScreenContentState extends State<CartScreenContent> {
                             color: ColorConstants.blackColor,
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () => cubit.deleteAllCart(),
-                          child: const Text(
-                            'Kosongkan Cart',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: CupertinoColors.systemRed,
+                        if (state.cartDetail.isNotEmpty) ...{
+                          GestureDetector(
+                            onTap: () => cubit.deleteAllCart(),
+                            child: const Text(
+                              'Kosongkan Cart',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: CupertinoColors.systemRed,
+                              ),
                             ),
                           ),
-                        ),
+                        }
                       ],
                     ),
                     const Padding(
@@ -166,7 +183,7 @@ class _CartScreenContentState extends State<CartScreenContent> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          'Total Pembayaran',
+                          'Total Tagihan',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
