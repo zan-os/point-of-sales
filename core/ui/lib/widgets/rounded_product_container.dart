@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:common/utils/currency_formatter.dart';
+import 'package:dependencies/cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../drawable/rounded_white_drawable.dart';
@@ -9,7 +10,7 @@ class RoundedProductContainer extends StatelessWidget {
   final String? image;
   final File? path;
   final String? name;
-  final String? price;
+  final int? price;
   final Function? addButtonTap;
   const RoundedProductContainer({
     super.key,
@@ -55,7 +56,7 @@ class RoundedProductContainer extends StatelessWidget {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-            Text(formatRupiah(price ?? '0')),
+            Text(formatRupiah(price)),
           ],
         ),
       ),
@@ -105,17 +106,24 @@ class RoundedProductContainer extends StatelessWidget {
           topRight: Radius.circular(25),
         ),
         child: (path == null)
-            ? Image.network(
-                image ?? 'https://picsum.photos/seed/418/600',
-                width: 210,
+            ? CachedNetworkImage(
+                imageUrl: image ?? '',
+                width: 215,
                 height: 176,
-                fit: BoxFit.fitWidth,
+                filterQuality: FilterQuality.none,
+                maxHeightDiskCache: 176,
+                memCacheHeight: 176,
+                memCacheWidth: 215,
+                placeholder: (context, url) => (image == null)
+                    ? const Center(child: Text('Image'))
+                    : const SizedBox.shrink(),
+                errorWidget: (context, url, error) =>
+                    const Center(child: Icon(Icons.error)),
               )
             : Image.file(
                 path!,
-                width: 210,
+                width: 215,
                 height: 176,
-                fit: BoxFit.fitWidth,
               ),
       ),
     );

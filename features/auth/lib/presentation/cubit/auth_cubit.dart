@@ -14,9 +14,9 @@ class AuthCubit extends Cubit<AuthenticateState> {
 
   void loginWithEmail(String email, String password) async {
     log('email : $email password: $password');
+      emit(state.copyWith(status: CubitState.loading));
 
     try {
-      emit(state.copyWith(status: CubitState.loading));
       final response = await _supabase.auth
           .signInWithPassword(email: email, password: password);
 
@@ -26,12 +26,20 @@ class AuthCubit extends Cubit<AuthenticateState> {
         getRole(userId);
         log('user id = $userId');
       }
+    } on AuthException catch (e) {
+      log('$e');
+      emit(state.copyWith(status: CubitState.finishLoading));
+      emit(state.copyWith(status: CubitState.error, message: e.message));
     } catch (e) {
       log('$e');
+      emit(state.copyWith(status: CubitState.finishLoading));
+      emit(state.copyWith(
+          status: CubitState.error, message: 'Something went wrong'));
     }
   }
 
   void getRole(String userId) async {
+      emit(state.copyWith(status: CubitState.loading));
     try {
       final response = await _supabase
           .from('role')
@@ -42,9 +50,13 @@ class AuthCubit extends Cubit<AuthenticateState> {
 
       emit(state.copyWith(
           status: CubitState.hasData, userId: userId, role: role));
+      emit(state.copyWith(status: CubitState.success));
       log('getrole state ==> ${state.status}');
     } catch (e) {
       log('$e');
+      emit(state.copyWith(status: CubitState.finishLoading));
+      emit(state.copyWith(
+          status: CubitState.error, message: 'Gagal mendapatkan role'));
     }
   }
 }

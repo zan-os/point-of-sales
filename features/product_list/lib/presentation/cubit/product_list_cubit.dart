@@ -71,6 +71,8 @@ class ProductListCubit extends Cubit<ProductListState> {
       emit(state.copyWith(productList: productList));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(
+          status: CubitState.error, message: 'Gagal menambahkan ke keranjang'));
     }
   }
 
@@ -88,6 +90,8 @@ class ProductListCubit extends Cubit<ProductListState> {
       emit(state.copyWith(status: CubitState.hasData, categories: categories));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(
+          status: CubitState.error, message: 'Gagal menambahkan ke keranjang'));
     }
   }
 
@@ -112,8 +116,15 @@ class ProductListCubit extends Cubit<ProductListState> {
         params: {'p_product_id': product.id, 'p_product_price': product.price},
       );
       log('$response');
+      emit(state.copyWith(
+          status: CubitState.success,
+          message: 'Berhasil menambahkan ke keranjang'));
+
+      emit(state.copyWith(status: CubitState.initial));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(
+          status: CubitState.error, message: 'Gagal menambahkan ke keranjang'));
     }
   }
 }

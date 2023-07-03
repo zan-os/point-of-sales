@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:product_list/presentation/cubit/product_list_cubit.dart';
 import 'package:product_list/presentation/cubit/product_list_state.dart';
 import 'package:ui/const/colors_constants.dart';
+import 'package:ui/helper/show_snackbar.dart';
 import 'package:ui/widgets/app_bar_widget.dart';
 import 'package:ui/widgets/rounded_product_container.dart';
 import 'package:ui/widgets/search_bar_widget.dart';
@@ -79,11 +80,19 @@ class _ProductListContentState extends State<_ProductListContent> {
           if (state.status == CubitState.finishLoading) {
             Navigator.pop(context);
           }
+          if (state.status == CubitState.success) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(showSnackBar(state.message, isError: false));
+          }
+          if (state.status == CubitState.error) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(showSnackBar(state.message, isError: true));
+          }
         },
         builder: (context, state) => Column(
           children: [
             _buildSearchAndFilter(),
-            if (state.status == CubitState.hasData) ...[
+            if (state.productList.isNotEmpty) ...[
               _buildCategoryList(categories: state.categories),
               _buildProductGrid(productList: state.productList),
             ]
@@ -116,13 +125,16 @@ class _ProductListContentState extends State<_ProductListContent> {
 
   Widget _buildProductItem(
       {required BuildContext context, required ProductModel product}) {
-    return RoundedProductContainer(
-      name: product.name,
-      price: product.price.toString(),
-      image: product.image,
-      addButtonTap: () {
-        cubit.addToCart(product: product);
-      },
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: RoundedProductContainer(
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        addButtonTap: () {
+          cubit.addToCart(product: product);
+        },
+      ),
     );
   }
 

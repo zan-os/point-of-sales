@@ -21,22 +21,29 @@ class AddProductCubit extends Cubit<AddProductState> {
     try {
       emit(state.copyWith(status: CubitState.loading));
       final image = await ImagePicker().pickImage(source: source);
+      emit(state.copyWith(status: CubitState.finishLoading));
       if (image == null) return;
       File? img = File(image.path);
       img = await cropImage(sourcePath: img);
       log('image ==> ${state.image} state ==> ${state.status}');
     } catch (e) {
       log('Pick Image Error ==> $e');
+      emit(state.copyWith(status: CubitState.error, message: e.toString()));
     }
   }
 
   Future<File?> cropImage({required File sourcePath}) async {
-    CroppedFile? croppedFile =
-        await ImageCropper().cropImage(sourcePath: sourcePath.path);
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: sourcePath.path,
+      compressFormat: ImageCompressFormat.jpg,
+      compressQuality: 90,
+    );
 
-    emit(state.copyWith(
-        status: CubitState.hasData, image: File(croppedFile?.path ?? '')));
+    emit(state.copyWith(status: CubitState.finishLoading));
+
     if (croppedFile == null) return null;
+    emit(state.copyWith(
+        status: CubitState.hasData, image: File(croppedFile.path)));
     return File(croppedFile.path);
   }
 
@@ -48,10 +55,12 @@ class AddProductCubit extends Cubit<AddProductState> {
       final List json = jsonDecode(response);
       final categories = json.map((e) => CategoryModel.fromJson(e)).toList();
 
-      emit(state.copyWith(status: CubitState.hasData, categories: categories));
+      emit(state.copyWith(
+          status: CubitState.finishLoading, categories: categories));
       log(response);
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(status: CubitState.error, message: e.toString()));
     }
   }
 
@@ -65,11 +74,11 @@ class AddProductCubit extends Cubit<AddProductState> {
     required String price,
     required String stock,
   }) async {
+    emit(state.copyWith(status: CubitState.loading));
+
     try {
       final imagePath =
           'images/product/${basename(state.image?.path ?? '')}${math.Random().nextInt(10000)}';
-
-      emit(state.copyWith(status: CubitState.loading));
 
       await _supabase.storage.from('pos').upload(
             imagePath,
@@ -90,10 +99,12 @@ class AddProductCubit extends Cubit<AddProductState> {
         {'product_id': product[0]['id'], 'qty': stock},
       );
 
-      emit(state.copyWith(status: CubitState.hasData));
+      emit(state.copyWith(status: CubitState.finishLoading));
+      emit(state.copyWith(status: CubitState.success));
       log('porduct ==> $product[0]["id"]');
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(status: CubitState.error, message: e.toString()));
     }
   }
 }

@@ -5,6 +5,7 @@ import 'package:dependencies/equatable/equatable.dart';
 
 class ProductListState extends Equatable {
   final CubitState status;
+  final String message;
   final String selectedCategoryId;
   final String searchedProduct;
   final List<ProductModel> productList;
@@ -12,6 +13,7 @@ class ProductListState extends Equatable {
 
   const ProductListState({
     this.status = CubitState.initial,
+    this.message = '',
     this.selectedCategoryId = '0',
     this.searchedProduct = '',
     this.productList = const [],
@@ -19,13 +21,14 @@ class ProductListState extends Equatable {
   });
 
   ProductListState copyWith(
-      {CubitState? status,
+      {CubitState? status,String? message,
       String? selectedCategoryId,
       String? searchedProduct,
       List<ProductModel>? productList,
       List<CategoryModel>? categories}) {
     return ProductListState(
       status: status ?? this.status,
+      message: message ?? this.message,
       selectedCategoryId: selectedCategoryId ?? this.selectedCategoryId,
       searchedProduct: searchedProduct ?? this.searchedProduct,
       productList: productList ?? this.productList,
@@ -40,5 +43,6 @@ class ProductListState extends Equatable {
         categories,
         searchedProduct,
         selectedCategoryId,
+        message,
       ];
 }

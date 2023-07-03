@@ -16,17 +16,36 @@ class BottomNavigationScreen extends StatefulWidget {
 }
 
 class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
-  Widget? _child;
+  Widget _child = Container();
   int _selectedIndex = 0;
+  Map<String, String> arguments = {};
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero).then((value) {
+      setState(() {
+        arguments =
+            ModalRoute.of(context)?.settings.arguments as Map<String, String>;
+
+        if (arguments['role'] == 'ADMIN') {
+          _child = HomeScreen(email: arguments['email'] ?? '');
+        }
+        if (arguments['role'] == 'CASHIER') {
+          _child = const Center(
+            child: Text('InvoicePage'),
+          );
+        }
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final arguments =
-        ModalRoute.of(context)?.settings.arguments as Map<String, String>;
     return Scaffold(
       backgroundColor: Colors.white,
       extendBody: true,
-      body: _child ?? HomeScreen(email: arguments['email'] ?? 'Unknown'),
+      body: _child,
       bottomNavigationBar: FluidBottomNavigationBar(
         role: arguments['role'] ?? 'CASHIER',
         onChange: (index) {

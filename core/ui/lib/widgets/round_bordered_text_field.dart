@@ -5,6 +5,8 @@ class RoundBorderedTextFIeld extends StatefulWidget {
   final String label;
   final TextEditingController? controller;
   final bool enabled;
+  final bool? obsecureText;
+  final TextInputType? keyboardType;
   final Function(String)? onChange;
   const RoundBorderedTextFIeld({
     Key? key,
@@ -12,6 +14,8 @@ class RoundBorderedTextFIeld extends StatefulWidget {
     this.controller,
     required this.enabled,
     this.onChange,
+    this.keyboardType,
+    this.obsecureText,
   }) : super(key: key);
 
   @override
@@ -20,10 +24,14 @@ class RoundBorderedTextFIeld extends StatefulWidget {
 
 class _RoundBorderedTextFIeldState extends State<RoundBorderedTextFIeld> {
   late TextEditingController _textEditingController;
+  late TextInputType _keyboardType;
+  late bool _obsecureText;
 
   @override
   void initState() {
     super.initState();
+    _keyboardType = widget.keyboardType ?? TextInputType.text;
+    _obsecureText = widget.obsecureText ?? false;
     _textEditingController = widget.controller ?? TextEditingController();
     _textEditingController.addListener(_handleTextChange);
   }
@@ -45,9 +53,10 @@ class _RoundBorderedTextFIeldState extends State<RoundBorderedTextFIeld> {
     return TextFormField(
       enabled: widget.enabled,
       controller: _textEditingController,
-      obscureText: false,
+      obscureText: _obsecureText,
+      keyboardType: _keyboardType,
       decoration: _inputDecoration(),
-      maxLines: null,
+      maxLines: _obsecureText ? 1 : null,
       onChanged: (value) {
         if (widget.onChange != null) {
           widget.onChange!(value);
