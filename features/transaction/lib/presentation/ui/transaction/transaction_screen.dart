@@ -35,6 +35,7 @@ class TransactionScreenContent extends StatefulWidget {
 }
 
 class _TransactionScreenContentState extends State<TransactionScreenContent> {
+    final unfocusNode = FocusNode();
   final TextEditingController _paymentController = TextEditingController();
   final TextEditingController _tableController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
@@ -61,7 +62,6 @@ class _TransactionScreenContentState extends State<TransactionScreenContent> {
 
   @override
   Widget build(BuildContext context) {
-    final FocusNode unfocusNode = FocusNode();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: const AppBarWidget(

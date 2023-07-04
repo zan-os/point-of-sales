@@ -6,5 +6,5 @@ String formatRupiah(int? value) {
     symbol: 'Rp.',
     decimalDigits: 0,
   );
-  return formatCurrency.format(value);
+  return formatCurrency.format(value ?? 0);
 }

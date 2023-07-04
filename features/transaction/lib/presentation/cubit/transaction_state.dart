@@ -1,6 +1,6 @@
+import 'package:common/model/transaction_detail_model.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/equatable/equatable.dart';
-import 'package:transaction/data/model/transaction_detail/transaction_detail_model.dart';
 
 class TransactionState extends Equatable {
   final CubitState status;
@@ -9,12 +9,13 @@ class TransactionState extends Equatable {
   final int totalBill;
   final List<TransactionDetailModel> transactionDetail;
 
-  const TransactionState(
-      {this.totalBill = 0,
-      this.userId = '',
-      this.status = CubitState.initial,
-      this.message = '',
-      this.transactionDetail = const []});
+  const TransactionState({
+    this.totalBill = 0,
+    this.userId = '',
+    this.status = CubitState.initial,
+    this.message = '',
+    this.transactionDetail = const [],
+  });
 
   TransactionState copyWith({
     CubitState? status,

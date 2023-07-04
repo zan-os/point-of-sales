@@ -39,7 +39,7 @@ class _CartScreenContentState extends State<CartScreenContent> {
 
   @override
   void initState() {
-    Future.delayed(Duration.zero).then((value) => cubit.fetchCart());
+    Future.delayed(Duration.zero).then((value) => cubit.init());
     super.initState();
   }
 
@@ -91,7 +91,7 @@ class _CartScreenContentState extends State<CartScreenContent> {
                         'transaction_id': state.createdTransactionId,
                         'total_bill': state.totalBill
                       },
-                    ).then((value) => cubit.fetchCart())
+                    ).then((value) => cubit.init())
                   : ScaffoldMessenger.of(context).showSnackBar(
                       showSnackBar('Gagal mendapatkan id transaksi',
                           isError: true),

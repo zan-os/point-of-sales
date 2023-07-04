@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:common/model/transaction_detail_model.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:common/utils/currency_formatter.dart';
 import 'package:dependencies/bloc/bloc.dart';
@@ -11,7 +12,6 @@ import 'package:ui/helper/show_snackbar.dart';
 import 'package:ui/widgets/product_list_tile.dart';
 import 'package:ui/widgets/rounded_button_widget.dart';
 
-import '../../../data/model/transaction_detail/transaction_detail_model.dart';
 import '../../cubit/transaction_state.dart';
 
 class TransactionDetailScreen extends StatelessWidget {
@@ -80,7 +80,7 @@ class _TransactionDetailContent extends StatelessWidget {
     );
   }
 
-  Widget _header(Transaction transaction) {
+  Widget _header(TransactionModel transaction) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -220,12 +220,16 @@ class _TransactionDetailContent extends StatelessWidget {
               color: ColorConstants.blackColor,
             ),
           ),
-          Text(
-            isCurrency ? formatRupiah(price ?? 0) : content ?? '',
-            style: TextStyle(
-              fontSize: isBold ? 16 : 14,
-              fontWeight: isBold ? FontWeight.w500 : FontWeight.w400,
-              color: ColorConstants.blackColor,
+          const SizedBox(width: 8.0),
+          Flexible(
+            child: Text(
+              isCurrency ? formatRupiah(price ?? 0) : content ?? '',
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                fontSize: isBold ? 16 : 14,
+                fontWeight: isBold ? FontWeight.w500 : FontWeight.w400,
+                color: ColorConstants.blackColor,
+              ),
             ),
           )
         ],

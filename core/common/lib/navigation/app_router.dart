@@ -5,4 +5,6 @@ class AppRouter {
   static const String addCashier = '/add-cashier';
   static const String transaction = '/transaction';
   static const String transactionDetail = '/transaction-detail';
+  static const String invoice = '/invoice';
+  static const String invoiceDetail = '/invoice-detail';
 }

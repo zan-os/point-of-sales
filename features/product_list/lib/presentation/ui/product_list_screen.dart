@@ -44,26 +44,7 @@ class _ProductListContentState extends State<_ProductListContent> {
 
   int? categoryIndex = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration.zero).then((value) => cubit.init());
-    _searchController = TextEditingController();
-  }
-
-  @override
-  void didChangeDependencies() {
-    cubit = context.read<ProductListCubit>();
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  Widget _buildBody() {
+  Widget _scaffoldBody() {
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
       child: BlocConsumer<ProductListCubit, ProductListState>(
@@ -234,6 +215,25 @@ class _ProductListContentState extends State<_ProductListContent> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero).then((value) => cubit.init());
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    cubit = context.read<ProductListCubit>();
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
@@ -245,7 +245,7 @@ class _ProductListContentState extends State<_ProductListContent> {
         ),
         key: scaffoldKey,
         backgroundColor: backgroundColor,
-        body: SafeArea(child: _buildBody()),
+        body: SafeArea(child: _scaffoldBody()),
       ),
     );
   }

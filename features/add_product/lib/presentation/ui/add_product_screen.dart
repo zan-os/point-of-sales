@@ -68,60 +68,6 @@ class _AddProductContentState extends State<AddProductContent> {
 
   late AddProductCubit cubit;
 
-  @override
-  void initState() {
-    Future.delayed(Duration.zero).then((value) => cubit.fetchCategories());
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    cubit = BlocProvider.of<AddProductCubit>(context, listen: false);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final FocusNode unfocusNode = FocusNode();
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: const AppBarWidget(
-          isHome: false, title: 'Tambah Produk', enableAction: false),
-      backgroundColor: Colors.white,
-      body: BlocConsumer<AddProductCubit, AddProductState>(
-        listener: (context, state) {
-          if (state.status == CubitState.hasData) {
-            setState(() {
-              _image = state.image;
-            });
-          }
-          if (state.status == CubitState.success) {
-            ScaffoldMessenger.of(context).showSnackBar(uploadSuccess);
-          }
-          if (state.status == CubitState.loading) {
-            FocusScope.of(context).requestFocus(unfocusNode);
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) =>
-                  LoadingAnimationWidget.inkDrop(color: Colors.white, size: 50),
-            );
-          }
-          if (state.status == CubitState.finishLoading) {
-            Navigator.pop(context);
-          }
-          if (state.status == CubitState.error) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(showSnackBar(state.message, isError: true));
-          }
-        },
-        builder: (context, state) {
-          return _buildBody();
-        },
-      ),
-    );
-  }
-
   void _showImageSourcePicker() {
     showModalBottomSheet(
       context: context,
@@ -172,7 +118,7 @@ class _AddProductContentState extends State<AddProductContent> {
     );
   }
 
-  SafeArea _buildBody() {
+  SafeArea _scaffoldBody() {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -183,11 +129,11 @@ class _AddProductContentState extends State<AddProductContent> {
             const SizedBox(
               height: 8.0,
             ),
-            _buildPreviewCard(),
+            _previewCard(),
             const SizedBox(
               height: 16.0,
             ),
-            _buildImagePickerText(),
+            _imagePickerText(),
             const SizedBox(
               height: 16.0,
             ),
@@ -245,14 +191,14 @@ class _AddProductContentState extends State<AddProductContent> {
             const SizedBox(
               height: 16.0,
             ),
-            _buildAddButton(),
+            _addButton(),
           ],
         ),
       ),
     );
   }
 
-  GestureDetector _buildImagePickerText() {
+  GestureDetector _imagePickerText() {
     return GestureDetector(
       onTap: () => _showImageSourcePicker(),
       child: const SizedBox(
@@ -268,7 +214,7 @@ class _AddProductContentState extends State<AddProductContent> {
     );
   }
 
-  Center _buildPreviewCard() {
+  Center _previewCard() {
     return Center(
       child: Column(
         children: [
@@ -293,7 +239,7 @@ class _AddProductContentState extends State<AddProductContent> {
     );
   }
 
-  Widget _buildAddButton() {
+  Widget _addButton() {
     return RoundedButtonWidget(
       title: 'Tambah Produk',
       onTap: () => (_formValidator())
@@ -317,5 +263,59 @@ class _AddProductContentState extends State<AddProductContent> {
       return true;
     }
     return false;
+  }
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero).then((value) => cubit.fetchCategories());
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    cubit = BlocProvider.of<AddProductCubit>(context, listen: false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final FocusNode unfocusNode = FocusNode();
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: const AppBarWidget(
+          isHome: false, title: 'Tambah Produk', enableAction: false),
+      backgroundColor: Colors.white,
+      body: BlocConsumer<AddProductCubit, AddProductState>(
+        listener: (context, state) {
+          if (state.status == CubitState.hasData) {
+            setState(() {
+              _image = state.image;
+            });
+          }
+          if (state.status == CubitState.success) {
+            ScaffoldMessenger.of(context).showSnackBar(uploadSuccess);
+          }
+          if (state.status == CubitState.loading) {
+            FocusScope.of(context).requestFocus(unfocusNode);
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) =>
+                  LoadingAnimationWidget.inkDrop(color: Colors.white, size: 50),
+            );
+          }
+          if (state.status == CubitState.finishLoading) {
+            Navigator.pop(context);
+          }
+          if (state.status == CubitState.error) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(showSnackBar(state.message, isError: true));
+          }
+        },
+        builder: (context, state) {
+          return _scaffoldBody();
+        },
+      ),
+    );
   }
 }

@@ -1,4 +1,4 @@
-name: bottom_navigation
+name: invoice
 description: A new Flutter package project.
 publish_to: none
 version: 0.0.1
@@ -14,27 +14,10 @@ dependencies:
 
   ui:
     path: ../../core/ui
-
   common:
     path: ../../core/common
-
   dependencies:
     path: ../../core/dependencies
-
-  home:
-    path: ../home
-
-  profile:
-    path: ../profile
-
-  product_list:
-    path: ../product_list
-
-  invoice:
-    path: ../invoice
-
-  cart:
-    path: ../cart
 
 dev_dependencies:
   flutter_test:

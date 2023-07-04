@@ -26,6 +26,9 @@ dependencies:
   transaction:
     path: features/transaction
 
+  invoice:
+    path: features/invoice
+
   common:
     path: core/common
 

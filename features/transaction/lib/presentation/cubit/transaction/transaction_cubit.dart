@@ -5,7 +5,7 @@ import 'package:common/utils/catch_error_logger.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/supabase/supabase.dart';
-import 'package:transaction/data/model/transaction_detail/transaction_detail_model.dart';
+import 'package:common/model/transaction_detail_model.dart';
 
 import '../transaction_state.dart';
 

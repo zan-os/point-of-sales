@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cart/presentation/ui/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:home/presentation/ui/home_screen.dart';
+import 'package:invoice/presentation/ui/invoice_screen.dart';
 import 'package:product_list/presentation/ui/product_list_screen.dart';
 import 'package:profile/presentation/ui/profile_screen.dart';
 
@@ -74,9 +75,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
             break;
           case 1:
             log('ojan 1');
-            _child = const Center(
-              child: Text('InvoicePage'),
-            );
+            _child = const InvoiceScreen();
             _selectedIndex = index;
             break;
           case 2:
@@ -109,9 +108,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
         switch (index) {
           case 0:
             log('ojan 1');
-            _child = const Center(
-              child: Text('InvoicePage'),
-            );
+            _child = const InvoiceScreen();
             _selectedIndex = index;
             break;
           case 1:
