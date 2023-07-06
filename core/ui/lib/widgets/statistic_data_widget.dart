@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:ui/const/colors_constants.dart';
 
 class StatisticDataWidget extends StatelessWidget {
-  final int tOrder, tDistribution, tNewOrder, tCanceled;
+  final int tProduct, tOutOfStock, tTransaction;
+  final String tIncome;
   const StatisticDataWidget({
     super.key,
-    this.tOrder = 0,
-    this.tDistribution = 0,
-    this.tNewOrder = 0,
-    this.tCanceled = 0,
+    this.tProduct = 0,
+    this.tOutOfStock = 0,
+    this.tTransaction = 0,
+    this.tIncome = '',
   });
 
   @override
@@ -20,8 +21,8 @@ class StatisticDataWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: [
-            _buildStatisticWidget(tOrder.toString(), 'Total Distributor'),
-            _buildStatisticWidget(tDistribution.toString(), 'Total Customer'),
+            _buildStatisticWidget(tProduct.toString(), 'Total Produk'),
+            _buildStatisticWidget(tOutOfStock.toString(), 'Produk yang habis'),
           ],
         ),
         const SizedBox(height: 8.0),
@@ -32,8 +33,8 @@ class StatisticDataWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: [
-            _buildStatisticWidget(tNewOrder.toString(), 'New Order'),
-            _buildStatisticWidget(tCanceled.toString(), 'Canceled Order'),
+            _buildStatisticWidget(tTransaction.toString(), 'Total Transaksi'),
+            _buildStatisticWidget(tIncome.toString(), 'Total Pemasukan'),
           ],
         ),
       ],
@@ -49,7 +50,7 @@ class StatisticDataWidget extends StatelessWidget {
         Text(
           count,
           style: const TextStyle(
-            fontSize: 20.0,
+            fontSize: 16.0,
             color: ColorConstants.primaryYellow,
             fontWeight: FontWeight.bold,
           ),
@@ -58,7 +59,7 @@ class StatisticDataWidget extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            fontSize: 16.0,
+            fontSize: 14.0,
             color: ColorConstants.greyColor,
           ),
         ),

@@ -12,6 +12,9 @@ class RoundedProductContainer extends StatelessWidget {
   final String? name;
   final int? price;
   final Function? addButtonTap;
+  final Function? onProductTap;
+  final bool isStockManager;
+  final String? stock;
   const RoundedProductContainer({
     super.key,
     this.image,
@@ -19,46 +22,79 @@ class RoundedProductContainer extends StatelessWidget {
     this.price,
     this.path,
     this.addButtonTap,
+    this.onProductTap,
+    this.isStockManager = false,
+    this.stock,
   });
 
   @override
   Widget build(BuildContext context) {
     const double borderRadius = 20;
 
-    return RoundedContainerDrawable(
-      radius: borderRadius,
-      padding: 0,
-      onTap: () {},
-      child: Stack(
+    return GestureDetector(
+      child: RoundedContainerDrawable(
+        radius: borderRadius,
+        padding: 0,
+        onTap: () {
+          if (onProductTap != null) {
+            onProductTap!();
+          }
+        },
+        child: Stack(
+          children: [
+            _buildImage(),
+            isStockManager
+                ? const SizedBox.shrink()
+                : _buildAddButton(borderRadius),
+            Align(
+                alignment: Alignment.bottomCenter, child: _buildProductInfo()),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _stockInfo() {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          _buildImage(),
-          _buildAddButton(borderRadius),
-          _buildProductInfo(),
+          const Text(
+            'Stock',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 8.0),
+          Text(stock ?? '0'),
         ],
       ),
     );
   }
 
-  Align _buildProductInfo() {
-    return Align(
-      alignment: const AlignmentDirectional(-1, 1),
-      child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 10),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 8),
-              child: Text(
-                name ?? '-',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+  Widget _buildProductInfo() {
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 10),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 8),
+                child: Text(
+                  name ?? '-',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            Text(formatRupiah(price)),
-          ],
-        ),
+              Text(formatRupiah(price)),
+            ],
+          ),
+          isStockManager ? _stockInfo() : const SizedBox.shrink()
+        ],
       ),
     );
   }

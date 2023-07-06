@@ -1,26 +1,63 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:common/navigation/app_router.dart';
+import 'package:common/utils/currency_formatter.dart';
+import 'package:dependencies/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:home/data/model/feature_grid_model.dart';
-import 'package:ui/const/colors_constants.dart';
+import 'package:home/presentation/cubit/home_cubit.dart';
+import 'package:home/presentation/cubit/home_state.dart';
 import 'package:ui/drawable/rounded_white_drawable.dart';
 import 'package:ui/drawable/rounded_yellow_drawable.dart';
 import 'package:ui/widgets/app_bar_widget.dart';
-import 'package:ui/widgets/pending_action_tile_widget.dart';
 import 'package:ui/widgets/statistic_data_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   final String email;
   const HomeScreen({
+    super.key,
+    required this.email,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<HomeCubit>(
+      create: (context) => HomeCubit(),
+      child: HomeScreenContent(email: email),
+    );
+  }
+}
+
+class HomeScreenContent extends StatefulWidget {
+  final String email;
+  const HomeScreenContent({
     Key? key,
     required this.email,
   }) : super(key: key);
 
   @override
+  State<HomeScreenContent> createState() => _HomeScreenContentState();
+}
+
+class _HomeScreenContentState extends State<HomeScreenContent> {
+  late HomeCubit cubit;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    cubit = context.read<HomeCubit>();
+    cubit.init();
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  AppBarWidget(
+      appBar: AppBarWidget(
         isHome: true,
-        title: 'Hello $email',
+        title: 'Hello ${widget.email}',
         enableLeading: false,
       ),
       body: SingleChildScrollView(
@@ -47,43 +84,6 @@ class HomeScreen extends StatelessWidget {
           ),
           _buildGridView(),
           const SizedBox(height: 14.0),
-          const Text(
-            'Order waiting  to be processed',
-            style: TextStyle(fontSize: 16.0, color: ColorConstants.greyColor),
-          ),
-          const SizedBox(height: 16.0),
-          _buildPendingActionTile()
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPendingActionTile() {
-    return RoundedContainerDrawable(
-      padding: 16.0,
-      onTap: () {},
-      child: ListView(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        children: const [
-          PendingActionTileWidget(
-            title: 'Waiting for approval',
-            count: '10',
-          ),
-          SizedBox(height: 4.0),
-          Divider(),
-          SizedBox(height: 4.0),
-          PendingActionTileWidget(
-            title: 'Waiting for payment',
-            count: '5',
-          ),
-          SizedBox(height: 4.0),
-          Divider(),
-          SizedBox(height: 4.0),
-          PendingActionTileWidget(
-            title: 'Waiting to be shipped',
-            count: '10',
-          ),
         ],
       ),
     );
@@ -96,29 +96,17 @@ class HomeScreen extends StatelessWidget {
       const FeatureGridModel(
         icon: Icons.add_box_outlined,
         title: 'Tambah Produk',
-        page: '/add-product',
+        page: AppRouter.addProduct,
       ),
       const FeatureGridModel(
         icon: Icons.add_business_outlined,
         title: 'Tambah Pegawai',
-        page: '/add-cashier',
+        page: AppRouter.addCashier,
       ),
       const FeatureGridModel(
-        icon: Icons.stacked_bar_chart_outlined,
-        title: 'Add Stock',
-      ),
-      const FeatureGridModel(
-        icon: Icons.view_list_sharp,
-        title: 'List Order',
-      ),
-      const FeatureGridModel(
-        icon: Icons.receipt_long_outlined,
-        title: 'Report',
-      ),
-      const FeatureGridModel(
-        icon: Icons.person_pin_outlined,
-        title: 'Absen',
-      ),
+          icon: Icons.stacked_bar_chart_outlined,
+          title: 'Atur Stok',
+          page: AppRouter.stock),
     ];
 
     return GridView.builder(
@@ -166,14 +154,16 @@ class HomeScreen extends StatelessWidget {
 
   // Showing statistic data
   Widget _buildStatisticData() {
-    return RoundedContainerDrawable(
-      onTap: () {},
-      child: const StatisticDataWidget(
-        // Set amount of statistic data from here
-        tOrder: 15,
-        tDistribution: 7,
-        tNewOrder: 4,
-        tCanceled: 0,
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) => RoundedContainerDrawable(
+        onTap: () {},
+        child: StatisticDataWidget(
+          // Set amount of statistic data from here
+          tProduct: state.totalProduct,
+          tOutOfStock: state.outOfStockProduct,
+          tTransaction: state.totalOrder,
+          tIncome: formatRupiah(state.totalIncome),
+        ),
       ),
     );
   }

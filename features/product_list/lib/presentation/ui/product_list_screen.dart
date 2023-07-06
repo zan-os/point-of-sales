@@ -37,7 +37,6 @@ class _ProductListContentState extends State<_ProductListContent> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final unfocusNode = FocusNode();
   final backgroundColor = Colors.grey[20];
-  final categories = ['All', 'Vegetable', 'Fruit', 'Seafood', 'Meat', 'Drinks'];
   late ProductListCubit cubit;
 
   late TextEditingController _searchController;
@@ -112,6 +111,7 @@ class _ProductListContentState extends State<_ProductListContent> {
         name: product.name,
         price: product.price,
         image: product.image,
+        isStockManager: false,
         addButtonTap: () {
           cubit.addToCart(product: product);
         },

@@ -21,21 +21,21 @@ class TransactionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<TransactionCubit>(
       create: (context) => TransactionCubit(),
-      child: const TransactionScreenContent(),
+      child: const _TransactionScreenContent(),
     );
   }
 }
 
-class TransactionScreenContent extends StatefulWidget {
-  const TransactionScreenContent({super.key});
+class _TransactionScreenContent extends StatefulWidget {
+  const _TransactionScreenContent();
 
   @override
-  State<TransactionScreenContent> createState() =>
+  State<_TransactionScreenContent> createState() =>
       _TransactionScreenContentState();
 }
 
-class _TransactionScreenContentState extends State<TransactionScreenContent> {
-    final unfocusNode = FocusNode();
+class _TransactionScreenContentState extends State<_TransactionScreenContent> {
+  final unfocusNode = FocusNode();
   final TextEditingController _paymentController = TextEditingController();
   final TextEditingController _tableController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();

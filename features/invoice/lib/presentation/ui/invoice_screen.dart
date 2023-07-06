@@ -18,19 +18,19 @@ class InvoiceScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<InvoiceCubit>(
       create: (context) => InvoiceCubit(),
-      child: const InvoiceScreenContent(),
+      child: const _InvoiceScreenContent(),
     );
   }
 }
 
-class InvoiceScreenContent extends StatefulWidget {
-  const InvoiceScreenContent({super.key});
+class _InvoiceScreenContent extends StatefulWidget {
+  const _InvoiceScreenContent();
 
   @override
-  State<InvoiceScreenContent> createState() => _InvoiceScreenContentState();
+  State<_InvoiceScreenContent> createState() => _InvoiceScreenContentState();
 }
 
-class _InvoiceScreenContentState extends State<InvoiceScreenContent> {
+class _InvoiceScreenContentState extends State<_InvoiceScreenContent> {
   final unfocusNode = FocusNode();
 
   late InvoiceCubit cubit;

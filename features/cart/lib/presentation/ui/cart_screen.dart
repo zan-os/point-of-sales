@@ -22,19 +22,19 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<CartCubit>(
       create: (context) => CartCubit(),
-      child: const CartScreenContent(),
+      child: const _CartScreenContent(),
     );
   }
 }
 
-class CartScreenContent extends StatefulWidget {
-  const CartScreenContent({super.key});
+class _CartScreenContent extends StatefulWidget {
+  const _CartScreenContent();
 
   @override
-  State<CartScreenContent> createState() => _CartScreenContentState();
+  State<_CartScreenContent> createState() => _CartScreenContentState();
 }
 
-class _CartScreenContentState extends State<CartScreenContent> {
+class _CartScreenContentState extends State<_CartScreenContent> {
   late CartCubit cubit;
 
   @override

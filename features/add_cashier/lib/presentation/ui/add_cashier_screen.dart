@@ -15,19 +15,19 @@ class AddCashierScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<AddCashierCubit>(
       create: (context) => AddCashierCubit(),
-      child: const AddCashierContent(),
+      child: const _AddCashierContent(),
     );
   }
 }
 
-class AddCashierContent extends StatefulWidget {
-  const AddCashierContent({super.key});
+class _AddCashierContent extends StatefulWidget {
+  const _AddCashierContent();
 
   @override
-  State<AddCashierContent> createState() => _AddCashierContentState();
+  State<_AddCashierContent> createState() => _AddCashierContentState();
 }
 
-class _AddCashierContentState extends State<AddCashierContent> {
+class _AddCashierContentState extends State<_AddCashierContent> {
   final unfocusNode = FocusNode();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();

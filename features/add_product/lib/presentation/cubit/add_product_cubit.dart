@@ -57,6 +57,7 @@ class AddProductCubit extends Cubit<AddProductState> {
 
       emit(state.copyWith(
           status: CubitState.finishLoading, categories: categories));
+      emit(state.copyWith(status: CubitState.initial));
       log(response);
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);

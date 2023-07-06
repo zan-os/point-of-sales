@@ -20,19 +20,19 @@ class AuthScreen extends StatelessWidget {
     return BlocProvider<AuthCubit>(
       create: (context) => AuthCubit(),
       lazy: true,
-      child: const AuthScreenContent(),
+      child: const _AuthScreenContent(),
     );
   }
 }
 
-class AuthScreenContent extends StatefulWidget {
-  const AuthScreenContent({super.key});
+class _AuthScreenContent extends StatefulWidget {
+  const _AuthScreenContent();
 
   @override
-  State<AuthScreenContent> createState() => _AuthScreenContentState();
+  State<_AuthScreenContent> createState() => _AuthScreenContentState();
 }
 
-class _AuthScreenContentState extends State<AuthScreenContent> {
+class _AuthScreenContentState extends State<_AuthScreenContent> {
   final supabase = Supabase.instance.client;
   final unfocusNode = FocusNode();
 

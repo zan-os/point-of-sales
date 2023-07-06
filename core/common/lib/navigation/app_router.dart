@@ -7,4 +7,6 @@ class AppRouter {
   static const String transactionDetail = '/transaction-detail';
   static const String invoice = '/invoice';
   static const String invoiceDetail = '/invoice-detail';
+  static const String stock = '/stock-list';
+  static const String stockManager = '/stock-manager';
 }

@@ -29,6 +29,9 @@ dependencies:
   invoice:
     path: features/invoice
 
+  stock:
+    path: features/stock
+
   common:
     path: core/common
 

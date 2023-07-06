@@ -26,22 +26,20 @@ class AddProductScreen extends StatelessWidget {
       create: (context) => AddProductCubit(),
       child: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
-        child: const AddProductContent(),
+        child: const _AddProductContent(),
       ),
     );
   }
 }
 
-class AddProductContent extends StatefulWidget {
-  const AddProductContent({
-    super.key,
-  });
+class _AddProductContent extends StatefulWidget {
+  const _AddProductContent();
 
   @override
-  State<AddProductContent> createState() => _AddProductContentState();
+  State<_AddProductContent> createState() => _AddProductContentState();
 }
 
-class _AddProductContentState extends State<AddProductContent> {
+class _AddProductContentState extends State<_AddProductContent> {
   final nameController = TextEditingController();
 
   final priceController = TextEditingController();
