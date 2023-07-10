@@ -151,6 +151,7 @@ class _TransactionScreenContentState extends State<_TransactionScreenContent> {
               enabled: true,
               label: 'Nominal Uang',
               controller: _paymentController,
+              keyboardType: TextInputType.number,
               onChange: (value) {},
             ),
             const SizedBox(
@@ -213,19 +214,13 @@ class _TransactionScreenContentState extends State<_TransactionScreenContent> {
   }
 
   bool _formValidator() {
-    final address = _addressController.text.trim();
     final payment = _paymentController.text.trim();
-    final table = _tableController.text.trim();
-    final phoneNumber = _phoneNumberController.text.trim();
 
-    if (address.isNotEmpty &&
-        payment.isNotEmpty &&
-        table.isNotEmpty &&
-        phoneNumber.isNotEmpty) {
+    if (payment.isNotEmpty) {
       return true;
     }
     ScaffoldMessenger.of(context)
-        .showSnackBar(showSnackBar('Isi form dengan benar', isError: true));
+        .showSnackBar(showSnackBar('Masukan nominal uang', isError: true));
     return false;
   }
 }
