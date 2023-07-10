@@ -9,7 +9,7 @@ class StockModel {
   final DateTime? createdAt;
   final ProductModel? product;
 
-  StockModel({
+  const StockModel({
     this.id,
     this.productId,
     this.qty,

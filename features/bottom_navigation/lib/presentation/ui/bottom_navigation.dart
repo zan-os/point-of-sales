@@ -80,7 +80,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
             break;
           case 2:
             log('ojan 2');
-            _child = const ProductListScreen();
+            _child = const ProductListScreen(isAdmin: true);
             _selectedIndex = index;
             break;
           case 3:
@@ -113,7 +113,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
             break;
           case 1:
             log('ojan 2');
-            _child = const ProductListScreen();
+            _child = const ProductListScreen(isAdmin: false);
             _selectedIndex = index;
             break;
           case 2:

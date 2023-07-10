@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:common/model/categories_model.dart';
 import 'package:common/model/product_model.dart';
+import 'package:common/model/stock_model.dart';
 import 'package:common/utils/catch_error_logger.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
@@ -87,7 +88,6 @@ class ProductListCubit extends Cubit<ProductListState> {
           0, CategoryModel(id: 0, name: 'All', createdAt: DateTime.now()));
 
       emit(state.copyWith(status: CubitState.finishLoading));
-      emit(state.copyWith(status: CubitState.hasData, categories: categories));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
       emit(state.copyWith(
@@ -125,6 +125,29 @@ class ProductListCubit extends Cubit<ProductListState> {
       catchErrorLogger(e, stacktrace);
       emit(state.copyWith(
           status: CubitState.error, message: 'Gagal menambahkan ke keranjang'));
+    }
+  }
+
+  Future<void> fetchProductDetail({required int productId}) async {
+    try {
+      emit(state.copyWith(status: CubitState.loading));
+      final response = await _supabase
+          .from('stock')
+          .select('*, product:product_id (*)')
+          .match({'product_id': productId}).single();
+
+      final encoded = jsonEncode(response);
+      final decoded = jsonDecode(encoded);
+      final stock = StockModel.fromJson(decoded);
+
+      emit(state.copyWith(status: CubitState.finishLoading));
+      emit(state.copyWith(status: CubitState.hasData, stock: stock));
+      log(encoded);
+      emit(state.copyWith(status: CubitState.initial));
+    } catch (e, stacktrace) {
+      catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(
+          status: CubitState.error, message: 'Gagal mendapatkan produk'));
     }
   }
 }

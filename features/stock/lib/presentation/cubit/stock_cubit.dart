@@ -4,13 +4,13 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:common/model/categories_model.dart';
+import 'package:common/model/stock_model.dart';
 import 'package:common/utils/catch_error_logger.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/image_manager/image_manager.dart';
 import 'package:dependencies/supabase/supabase.dart';
 import 'package:path/path.dart';
-import 'package:stock/data/model/stock_model.dart';
 import 'package:stock/presentation/cubit/stock_state.dart';
 
 class StockCubit extends Cubit<StockState> {
@@ -141,6 +141,20 @@ class StockCubit extends Cubit<StockState> {
           .update({'qty': stock}).match({'product_id': productId});
       emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(status: CubitState.success));
+    } catch (e, stacktrace) {
+      catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(status: CubitState.error, message: e.toString()));
+    }
+  }
+
+  void deleteProduct({required int productId}) async {
+    try {
+      emit(state.copyWith(status: CubitState.loading));
+      await _supabase.from('product').delete().match({'id': productId});
+
+      emit(state.copyWith(status: CubitState.finishLoading));
+      emit(state.copyWith(
+          status: CubitState.success, message: 'Produk berhasil dihapus'));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
       emit(state.copyWith(status: CubitState.error, message: e.toString()));

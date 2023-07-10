@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:common/model/categories_model.dart';
 import 'package:common/model/product_model.dart';
+import 'package:common/navigation/app_router.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/loading_animation/loading_animation.dart';
@@ -15,19 +16,24 @@ import 'package:ui/widgets/rounded_product_container.dart';
 import 'package:ui/widgets/search_bar_widget.dart';
 
 class ProductListScreen extends StatelessWidget {
-  const ProductListScreen({super.key});
+  final bool isAdmin;
+  const ProductListScreen({super.key, this.isAdmin = false});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProductListCubit>(
       create: (context) => ProductListCubit(),
-      child: const _ProductListContent(),
+      child: _ProductListContent(
+        isAdmin: isAdmin,
+      ),
     );
   }
 }
 
 class _ProductListContent extends StatefulWidget {
-  const _ProductListContent({Key? key}) : super(key: key);
+  final bool isAdmin;
+  const _ProductListContent({Key? key, required this.isAdmin})
+      : super(key: key);
 
   @override
   _ProductListContentState createState() => _ProductListContentState();
@@ -67,6 +73,17 @@ class _ProductListContentState extends State<_ProductListContent> {
           if (state.status == CubitState.error) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(showSnackBar(state.message, isError: true));
+          }
+
+          if (state.status == CubitState.hasData) {
+            Future.delayed(const Duration(seconds: 1)).then(
+              (value) => Navigator.pushNamed(
+                context,
+                AppRouter.stockManager,
+                arguments: state.stock,
+              ).then((value) => cubit.init()),
+            );
+            log(' tes ${state.stock}');
           }
         },
         builder: (context, state) => Column(
@@ -114,6 +131,11 @@ class _ProductListContentState extends State<_ProductListContent> {
         isStockManager: false,
         addButtonTap: () {
           cubit.addToCart(product: product);
+        },
+        onProductTap: () {
+          if (widget.isAdmin) {
+            cubit.fetchProductDetail(productId: product.id ?? 0);
+          }
         },
       ),
     );

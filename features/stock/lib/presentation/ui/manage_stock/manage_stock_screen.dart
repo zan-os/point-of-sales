@@ -1,6 +1,8 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:common/model/categories_model.dart';
+import 'package:common/model/stock_model.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/image_manager/image_manager.dart';
@@ -12,11 +14,10 @@ import 'package:stock/presentation/cubit/stock_state.dart';
 import 'package:ui/helper/show_snackbar.dart';
 import 'package:ui/widgets/app_bar_widget.dart';
 import 'package:ui/widgets/category_picker.dart';
+import 'package:ui/widgets/delete_button_widget.dart';
 import 'package:ui/widgets/round_bordered_text_field.dart';
 import 'package:ui/widgets/rounded_button_widget.dart';
 import 'package:ui/widgets/rounded_product_container.dart';
-
-import '../../../data/model/stock_model.dart';
 
 class ManageStockScreen extends StatelessWidget {
   const ManageStockScreen({super.key});
@@ -25,6 +26,7 @@ class ManageStockScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final FocusNode unfocusNode = FocusNode();
     final stock = ModalRoute.of(context)?.settings.arguments as StockModel;
+    log('ojjan ${stock.product!.name}');
     return BlocProvider<StockCubit>(
       create: (context) => StockCubit(),
       child: GestureDetector(
@@ -206,6 +208,10 @@ class _ManageStockContentState extends State<_ManageStockContent> {
               height: 16.0,
             ),
             _addButton(),
+            const SizedBox(
+              height: 16.0,
+            ),
+            _deleteButton()
           ],
         ),
       ),
@@ -269,6 +275,17 @@ class _ManageStockContentState extends State<_ManageStockContent> {
         });
   }
 
+  Widget _deleteButton() {
+    return DeleteButtonWidget(
+      title: 'Hapus Produk',
+      onTap: () {
+        if (stock.productId != null) {
+          cubit.deleteProduct(productId: stock.productId!);
+        }
+      },
+    );
+  }
+
   bool _formValidator() {
     final name = nameController.text.trim();
     final price = priceController.text.trim();
@@ -299,7 +316,7 @@ class _ManageStockContentState extends State<_ManageStockContent> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: const AppBarWidget(
-          isHome: false, title: 'Tambah Produk', enableAction: false),
+          isHome: false, title: 'Edit Produk', enableAction: false),
       backgroundColor: Colors.white,
       body: BlocConsumer<StockCubit, StockState>(
         listener: (context, state) {

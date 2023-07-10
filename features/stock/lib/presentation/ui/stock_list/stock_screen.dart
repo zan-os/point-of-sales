@@ -6,7 +6,7 @@ import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/loading_animation/loading_animation.dart';
 import 'package:flutter/material.dart';
-import 'package:stock/data/model/stock_model.dart';
+import 'package:common/model/stock_model.dart';
 import 'package:stock/presentation/cubit/stock_cubit.dart';
 import 'package:stock/presentation/cubit/stock_state.dart';
 import 'package:ui/helper/show_snackbar.dart';
