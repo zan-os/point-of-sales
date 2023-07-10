@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:common/model/categories_model.dart';
 import 'package:common/model/product_model.dart';
+import 'package:common/navigation/app_router.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/loading_animation/loading_animation.dart';
@@ -9,24 +8,30 @@ import 'package:flutter/material.dart';
 import 'package:product_list/presentation/cubit/product_list_cubit.dart';
 import 'package:product_list/presentation/cubit/product_list_state.dart';
 import 'package:ui/const/colors_constants.dart';
+import 'package:ui/helper/show_snackbar.dart';
 import 'package:ui/widgets/app_bar_widget.dart';
 import 'package:ui/widgets/rounded_product_container.dart';
 import 'package:ui/widgets/search_bar_widget.dart';
 
 class ProductListScreen extends StatelessWidget {
-  const ProductListScreen({super.key});
+  final bool isAdmin;
+  const ProductListScreen({super.key, this.isAdmin = false});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProductListCubit>(
       create: (context) => ProductListCubit(),
-      child: const _ProductListContent(),
+      child: _ProductListContent(
+        isAdmin: isAdmin,
+      ),
     );
   }
 }
 
 class _ProductListContent extends StatefulWidget {
-  const _ProductListContent({Key? key}) : super(key: key);
+  final bool isAdmin;
+  const _ProductListContent({Key? key, required this.isAdmin})
+      : super(key: key);
 
   @override
   _ProductListContentState createState() => _ProductListContentState();
@@ -36,39 +41,18 @@ class _ProductListContentState extends State<_ProductListContent> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final unfocusNode = FocusNode();
   final backgroundColor = Colors.grey[20];
-  final categories = ['All', 'Vegetable', 'Fruit', 'Seafood', 'Meat', 'Drinks'];
   late ProductListCubit cubit;
 
   late TextEditingController _searchController;
 
   int? categoryIndex = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration.zero).then((value) => cubit.init());
-    _searchController = TextEditingController();
-  }
-
-  @override
-  void didChangeDependencies() {
-    cubit = context.read<ProductListCubit>();
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  Widget _buildBody() {
+  Widget _scaffoldBody() {
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
       child: BlocConsumer<ProductListCubit, ProductListState>(
         listener: (context, state) {
           if (state.status == CubitState.loading) {
-            log('called');
             showDialog(
               context: context,
               barrierDismissible: false,
@@ -79,12 +63,30 @@ class _ProductListContentState extends State<_ProductListContent> {
           if (state.status == CubitState.finishLoading) {
             Navigator.pop(context);
           }
+          if (state.status == CubitState.success) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(showSnackBar(state.message, isError: false));
+          }
+          if (state.status == CubitState.error) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(showSnackBar(state.message, isError: true));
+          }
+
+          if (state.status == CubitState.hasData) {
+            Future.delayed(const Duration(seconds: 1)).then(
+              (value) => Navigator.pushNamed(
+                context,
+                AppRouter.stockManager,
+                arguments: state.stock,
+              ).then((value) => cubit.init()),
+            );
+          }
         },
         builder: (context, state) => Column(
           children: [
             _buildSearchAndFilter(),
-            if (state.status == CubitState.hasData) ...[
-              _buildCategoryList(categories: state.categories),
+            _buildCategoryList(categories: state.categories),
+            if (state.productList.isNotEmpty) ...[
               _buildProductGrid(productList: state.productList),
             ]
           ],
@@ -116,13 +118,22 @@ class _ProductListContentState extends State<_ProductListContent> {
 
   Widget _buildProductItem(
       {required BuildContext context, required ProductModel product}) {
-    return RoundedProductContainer(
-      name: product.name,
-      price: product.price.toString(),
-      image: product.image,
-      addButtonTap: () {
-        cubit.addToCart(product: product);
-      },
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: RoundedProductContainer(
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        isStockManager: false,
+        addButtonTap: () {
+          cubit.addToCart(product: product);
+        },
+        onProductTap: () {
+          if (widget.isAdmin) {
+            cubit.fetchProductDetail(productId: product.id ?? 0);
+          }
+        },
+      ),
     );
   }
 
@@ -160,7 +171,6 @@ class _ProductListContentState extends State<_ProductListContent> {
         setState(() {
           categoryIndex = index;
         });
-        log('index ==> $categoryIndex');
       },
       child: Padding(
         padding: const EdgeInsets.only(right: 12.0),
@@ -222,6 +232,25 @@ class _ProductListContentState extends State<_ProductListContent> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero).then((value) => cubit.init());
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    cubit = context.read<ProductListCubit>();
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
@@ -233,7 +262,7 @@ class _ProductListContentState extends State<_ProductListContent> {
         ),
         key: scaffoldKey,
         backgroundColor: backgroundColor,
-        body: SafeArea(child: _buildBody()),
+        body: SafeArea(child: _scaffoldBody()),
       ),
     );
   }

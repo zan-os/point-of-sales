@@ -1,4 +1,12 @@
-enum CubitState { initial, loading, error, hasData, noData, finishLoading }
+enum CubitState {
+  initial,
+  loading,
+  error,
+  success,
+  hasData,
+  noData,
+  finishLoading
+}
 
 extension CubitStateExtension on CubitState {
   bool get isLoading => this == CubitState.loading;

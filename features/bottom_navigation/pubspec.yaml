@@ -30,6 +30,9 @@ dependencies:
   product_list:
     path: ../product_list
 
+  invoice:
+    path: ../invoice
+
   cart:
     path: ../cart
 

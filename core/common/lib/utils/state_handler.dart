@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 
-class StateHandler<T extends StateStreamable<S>, S extends StateStreamable<S>> extends StatelessWidget {
+class StateHandler<T extends StateStreamable<S>, S extends StateStreamable<S>>
+    extends StatelessWidget {
   final T cubit;
   final S state;
   final Function onLoadingListener, onCompleteListener, onError;
@@ -18,7 +17,8 @@ class StateHandler<T extends StateStreamable<S>, S extends StateStreamable<S>> e
     required this.onCompleteListener,
     required this.onError,
     this.onCompleteBuilder,
-    required this.defaultBuilder, required this.state,
+    required this.defaultBuilder,
+    required this.state,
   });
 
   @override
@@ -31,32 +31,24 @@ class StateHandler<T extends StateStreamable<S>, S extends StateStreamable<S>> e
 
   Widget builderStateHandler(context, state) {
     if (state == CubitState.loading) {
-      log('ojan state ==> $state');
-      log('loading bro');
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
 
     if (state == CubitState.error) {
-      log('ojan state ==> $state');
-      log('error bro');
       return Center(
         child: Text(state.message),
       );
     }
 
     if (state == CubitState.hasData) {
-      log('ojan state ==> $state');
-      log('success bro');
       if (onCompleteBuilder != null) {
         return onCompleteBuilder!;
       }
     }
 
     if (state == CubitState.noData) {
-      log('ojan state ==> $state');
-      log('empty bro');
       return Center(
         child: Text(state.message),
       );
@@ -75,7 +67,6 @@ class StateHandler<T extends StateStreamable<S>, S extends StateStreamable<S>> e
     }
 
     if (state == CubitState.hasData) {
-      log('ojan data');
       onCompleteListener;
     }
   }

@@ -21,6 +21,10 @@ dependencies:
   supabase_flutter: ^1.10.4
   loading_animation_widget: ^1.2.0+4
   intl: ^0.18.1
+  cached_network_image: ^3.2.3
+  pdf: ^3.10.1
+  printing: ^5.10.4
+  screenshot: ^2.1.0
 
 dev_dependencies:
   flutter_test:

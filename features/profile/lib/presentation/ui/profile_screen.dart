@@ -11,26 +11,7 @@ class ProfileScreen extends StatelessWidget {
   final String role;
   ProfileScreen({super.key, required this.email, required this.role});
 
-  @override
-  Widget build(BuildContext context) {
-    final unfocusNode = FocusNode();
-
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
-      child: Scaffold(
-        key: navigatorKey,
-        appBar: const AppBarWidget(
-          isHome: false,
-          title: 'Profile',
-          enableLeading: false,
-        ),
-        backgroundColor: Colors.white,
-        body: _buildBody(),
-      ),
-    );
-  }
-
-  SafeArea _buildBody() {
+  SafeArea _scaffoldBody() {
     return SafeArea(
       top: true,
       child: Padding(
@@ -78,6 +59,25 @@ class ProfileScreen extends StatelessWidget {
       child: RoundBorderedTextFIeld(
         enabled: false,
         label: label,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final unfocusNode = FocusNode();
+
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
+      child: Scaffold(
+        key: navigatorKey,
+        appBar: const AppBarWidget(
+          isHome: false,
+          title: 'Profile',
+          enableLeading: false,
+        ),
+        backgroundColor: Colors.white,
+        body: _scaffoldBody(),
       ),
     );
   }

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:auth/presentation/cubit/auth_cubit.dart';
 import 'package:auth/presentation/cubit/auth_state.dart';
 import 'package:common/navigation/app_router.dart';
@@ -8,6 +6,7 @@ import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/loading_animation/loading_animation.dart';
 import 'package:dependencies/supabase/supabase.dart';
 import 'package:flutter/material.dart';
+import 'package:ui/helper/show_snackbar.dart';
 import 'package:ui/widgets/round_bordered_text_field.dart';
 import 'package:ui/widgets/rounded_button_widget.dart';
 
@@ -19,24 +18,31 @@ class AuthScreen extends StatelessWidget {
     return BlocProvider<AuthCubit>(
       create: (context) => AuthCubit(),
       lazy: true,
-      child: const AuthScreenContent(),
+      child: const _AuthScreenContent(),
     );
   }
 }
 
-class AuthScreenContent extends StatefulWidget {
-  const AuthScreenContent({super.key});
+class _AuthScreenContent extends StatefulWidget {
+  const _AuthScreenContent();
 
   @override
-  State<AuthScreenContent> createState() => _AuthScreenContentState();
+  State<_AuthScreenContent> createState() => _AuthScreenContentState();
 }
 
-class _AuthScreenContentState extends State<AuthScreenContent> {
+class _AuthScreenContentState extends State<_AuthScreenContent> {
   final supabase = Supabase.instance.client;
   final unfocusNode = FocusNode();
 
   late TextEditingController emailController;
   late TextEditingController passwordController;
+
+  bool isFormValid(String email, String password) {
+    if (email.isNotEmpty && password.isNotEmpty) {
+      return true;
+    }
+    return false;
+  }
 
   @override
   void initState() {
@@ -109,6 +115,7 @@ class _AuthScreenContentState extends State<AuthScreenContent> {
               padding: const EdgeInsets.only(bottom: 16.0),
               child: RoundBorderedTextFIeld(
                 controller: emailController,
+                keyboardType: TextInputType.emailAddress,
                 enabled: true,
                 label: 'Email',
               ),
@@ -117,6 +124,8 @@ class _AuthScreenContentState extends State<AuthScreenContent> {
               padding: const EdgeInsets.only(bottom: 16.0),
               child: RoundBorderedTextFIeld(
                 controller: passwordController,
+                keyboardType: TextInputType.visiblePassword,
+                obsecureText: true,
                 enabled: true,
                 label: 'Password',
               ),
@@ -127,8 +136,15 @@ class _AuthScreenContentState extends State<AuthScreenContent> {
                 onTap: () {
                   final String email = emailController.text.trim();
                   final String password = passwordController.text.trim();
-                  context.read<AuthCubit>().loginWithEmail(email, password);
                   FocusScope.of(context).requestFocus(unfocusNode);
+                  (isFormValid(email, password))
+                      ? context
+                          .read<AuthCubit>()
+                          .loginWithEmail(email, password)
+                      : ScaffoldMessenger.of(context).showSnackBar(
+                          showSnackBar('Harap isi form dengan benar',
+                              isError: true),
+                        );
                 },
                 title: 'Sign In',
               ),
@@ -151,43 +167,52 @@ class _AuthScreenContentState extends State<AuthScreenContent> {
         },
         child: Scaffold(
           backgroundColor: Colors.white,
-          body: BlocConsumer<AuthCubit, AuthenticateState>(
-            builder: (context, state) {
-              if (state.status == CubitState.loading) {}
-              if (state.status == CubitState.hasData) {}
-              if (state.status == CubitState.error) {}
-              return _buildBody();
-            },
-            listener: (context, state) {
-              if (state.status == CubitState.loading) {
-                log('loading');
-                showDialog(
-                  context: context,
-                  builder: (context) => LoadingAnimationWidget.inkDrop(
-                      color: Colors.white, size: 50),
-                );
-              }
-              if (state.status == CubitState.hasData) {
-                final Map<String, String> arguments = {
-                  'userId': state.userId,
-                  'role': state.role,
-                  'email': emailController.text.trim()
-                };
-                log('id ${state.userId} role ${state.role}');
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                Navigator.pushReplacementNamed(
-                  context,
-                  AppRouter.main,
-                  arguments: arguments,
-                );
-              }
-              if (state.status == CubitState.error) {
-                log('error');
-              }
-            },
-          ),
+          body: _scaffoldBody(),
         ),
       ),
+    );
+  }
+
+  BlocConsumer<AuthCubit, AuthenticateState> _scaffoldBody() {
+    return BlocConsumer<AuthCubit, AuthenticateState>(
+      builder: (context, state) {
+        if (state.status == CubitState.loading) {}
+        if (state.status == CubitState.hasData) {}
+        if (state.status == CubitState.error) {}
+        return _buildBody();
+      },
+      listener: (context, state) {
+        if (state.status == CubitState.loading) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) =>
+                LoadingAnimationWidget.inkDrop(color: Colors.white, size: 50),
+          );
+        }
+        if (state.status == CubitState.finishLoading) {
+          Navigator.pop(context);
+        }
+
+        if (state.status == CubitState.success) {
+          final Map<String, String> arguments = {
+            'userId': state.userId,
+            'role': state.role,
+            'email': emailController.text.trim()
+          };
+          Navigator.of(context).popUntil((route) => route.isFirst);
+          Navigator.pushReplacementNamed(
+            context,
+            AppRouter.main,
+            arguments: arguments,
+          );
+        }
+        if (state.status == CubitState.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            showSnackBar(state.message, isError: true),
+          );
+        }
+      },
     );
   }
 }

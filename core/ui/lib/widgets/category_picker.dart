@@ -78,7 +78,10 @@ class CategoryPickerState extends State<CategoryPicker> {
             categoryList(),
             RoundedButtonWidget(
               title: 'Pilih Kategori',
-              onTap: () => widget.onSelectButtonTap(_categoryModel),
+              onTap: () => {
+                widget.onSelectButtonTap(_categoryModel),
+                Navigator.pop(context)
+              },
             )
           ],
         ),

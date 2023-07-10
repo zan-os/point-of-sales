@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:add_product/presentation/cubit/add_product_cubit.dart';
@@ -8,7 +7,9 @@ import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/image_manager/image_manager.dart';
 import 'package:dependencies/loading_animation/loading_animation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ui/helper/show_snackbar.dart';
 import 'package:ui/widgets/app_bar_widget.dart';
 import 'package:ui/widgets/category_picker.dart';
 import 'package:ui/widgets/round_bordered_text_field.dart';
@@ -25,22 +26,20 @@ class AddProductScreen extends StatelessWidget {
       create: (context) => AddProductCubit(),
       child: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
-        child: const AddProductContent(),
+        child: const _AddProductContent(),
       ),
     );
   }
 }
 
-class AddProductContent extends StatefulWidget {
-  const AddProductContent({
-    super.key,
-  });
+class _AddProductContent extends StatefulWidget {
+  const _AddProductContent();
 
   @override
-  State<AddProductContent> createState() => _AddProductContentState();
+  State<_AddProductContent> createState() => _AddProductContentState();
 }
 
-class _AddProductContentState extends State<AddProductContent> {
+class _AddProductContentState extends State<_AddProductContent> {
   final nameController = TextEditingController();
 
   final priceController = TextEditingController();
@@ -49,58 +48,23 @@ class _AddProductContentState extends State<AddProductContent> {
 
   final categoryController = TextEditingController();
 
+  static const invalidFormSnackbar = SnackBar(
+    content: Text('Harap isi semua data'),
+    backgroundColor: CupertinoColors.systemRed,
+  );
+
+  static const uploadSuccess = SnackBar(
+    content: Text('Berhasil menambahkan produk'),
+    backgroundColor: CupertinoColors.systemGreen,
+  );
+
   String _name = '-';
 
-  String _price = '0';
+  int _price = 0;
 
   File? _image;
 
   late AddProductCubit cubit;
-
-  @override
-  void initState() {
-    Future.delayed(Duration.zero).then((value) => cubit.fetchCategories());
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    cubit = BlocProvider.of<AddProductCubit>(context, listen: false);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: const AppBarWidget(
-          isHome: false, title: 'Tambah Produk', enableAction: false),
-      backgroundColor: Colors.white,
-      body: BlocConsumer<AddProductCubit, AddProductState>(
-        listener: (context, state) {
-          log('state $state');
-          if (state.status == CubitState.hasData) {
-            log('set state');
-            setState(() {
-              _image = state.image;
-            });
-            Navigator.pop(context);
-          }
-          if (state.status == CubitState.loading) {
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) =>
-                  LoadingAnimationWidget.inkDrop(color: Colors.white, size: 50),
-            );
-          }
-        },
-        builder: (context, state) {
-          return _buildBody();
-        },
-      ),
-    );
-  }
 
   void _showImageSourcePicker() {
     showModalBottomSheet(
@@ -152,7 +116,7 @@ class _AddProductContentState extends State<AddProductContent> {
     );
   }
 
-  SafeArea _buildBody() {
+  SafeArea _scaffoldBody() {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -163,11 +127,11 @@ class _AddProductContentState extends State<AddProductContent> {
             const SizedBox(
               height: 8.0,
             ),
-            _buildPreviewCard(),
+            _previewCard(),
             const SizedBox(
               height: 16.0,
             ),
-            _buildUploadTextButton(),
+            _imagePickerText(),
             const SizedBox(
               height: 16.0,
             ),
@@ -187,11 +151,14 @@ class _AddProductContentState extends State<AddProductContent> {
             RoundBorderedTextFIeld(
               enabled: true,
               label: 'Harga Produk',
+              keyboardType: TextInputType.number,
               controller: priceController,
               onChange: (value) {
-                setState(() {
-                  _price = value;
-                });
+                if (value.isNotEmpty) {
+                  setState(() {
+                    _price = int.parse(value);
+                  });
+                }
               },
             ),
             const SizedBox(
@@ -215,20 +182,21 @@ class _AddProductContentState extends State<AddProductContent> {
             RoundBorderedTextFIeld(
               enabled: true,
               label: 'Stok',
+              keyboardType: TextInputType.number,
               controller: stockController,
               onChange: (value) {},
             ),
             const SizedBox(
               height: 16.0,
             ),
-            _buildAddButton(),
+            _addButton(),
           ],
         ),
       ),
     );
   }
 
-  GestureDetector _buildUploadTextButton() {
+  GestureDetector _imagePickerText() {
     return GestureDetector(
       onTap: () => _showImageSourcePicker(),
       child: const SizedBox(
@@ -244,7 +212,7 @@ class _AddProductContentState extends State<AddProductContent> {
     );
   }
 
-  Center _buildPreviewCard() {
+  Center _previewCard() {
     return Center(
       child: Column(
         children: [
@@ -269,14 +237,82 @@ class _AddProductContentState extends State<AddProductContent> {
     );
   }
 
-  Widget _buildAddButton() {
+  Widget _addButton() {
     return RoundedButtonWidget(
       title: 'Tambah Produk',
-      onTap: () => context.read<AddProductCubit>().uploadProduct(
-            name: nameController.text.trim(),
-            price: priceController.text.trim(),
-            stock: stockController.text.trim(),
-          ),
+      onTap: () {
+        final stock = stockController.text;
+        (_formValidator())
+            ? context.read<AddProductCubit>().uploadProduct(
+                  name: nameController.text.trim(),
+                  price: priceController.text.trim(),
+                  stock: (stock.isEmpty) ? '0' : stock,
+                )
+            : ScaffoldMessenger.of(context).showSnackBar(invalidFormSnackbar);
+      },
+    );
+  }
+
+  bool _formValidator() {
+    final name = nameController.text.trim();
+    final price = priceController.text.trim();
+    if (name.isNotEmpty && price.isNotEmpty && _image != null) {
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero).then((value) => cubit.fetchCategories());
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    cubit = BlocProvider.of<AddProductCubit>(context, listen: false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final FocusNode unfocusNode = FocusNode();
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: const AppBarWidget(
+          isHome: false, title: 'Tambah Produk', enableAction: false),
+      backgroundColor: Colors.white,
+      body: BlocConsumer<AddProductCubit, AddProductState>(
+        listener: (context, state) {
+          if (state.status == CubitState.hasData) {
+            setState(() {
+              _image = state.image;
+            });
+          }
+          if (state.status == CubitState.success) {
+            ScaffoldMessenger.of(context).showSnackBar(uploadSuccess);
+          }
+          if (state.status == CubitState.loading) {
+            FocusScope.of(context).requestFocus(unfocusNode);
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) =>
+                  LoadingAnimationWidget.inkDrop(color: Colors.white, size: 50),
+            );
+          }
+          if (state.status == CubitState.finishLoading) {
+            Navigator.pop(context);
+          }
+          if (state.status == CubitState.error) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(showSnackBar(state.message, isError: true));
+          }
+        },
+        builder: (context, state) {
+          return _scaffoldBody();
+        },
+      ),
     );
   }
 }

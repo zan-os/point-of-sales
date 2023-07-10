@@ -1,8 +1,7 @@
-import 'dart:developer';
-
 import 'package:cart/presentation/ui/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:home/presentation/ui/home_screen.dart';
+import 'package:invoice/presentation/ui/invoice_screen.dart';
 import 'package:product_list/presentation/ui/product_list_screen.dart';
 import 'package:profile/presentation/ui/profile_screen.dart';
 
@@ -16,17 +15,36 @@ class BottomNavigationScreen extends StatefulWidget {
 }
 
 class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
-  Widget? _child;
+  Widget _child = Container();
   int _selectedIndex = 0;
+  Map<String, String> arguments = {};
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero).then((value) {
+      setState(() {
+        arguments =
+            ModalRoute.of(context)?.settings.arguments as Map<String, String>;
+
+        if (arguments['role'] == 'ADMIN') {
+          _child = HomeScreen(email: arguments['email'] ?? '');
+        }
+        if (arguments['role'] == 'CASHIER') {
+          _child = const Center(
+            child: Text('InvoicePage'),
+          );
+        }
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final arguments =
-        ModalRoute.of(context)?.settings.arguments as Map<String, String>;
     return Scaffold(
       backgroundColor: Colors.white,
       extendBody: true,
-      body: _child ?? HomeScreen(email: arguments['email'] ?? 'Unknown'),
+      body: _child,
       bottomNavigationBar: FluidBottomNavigationBar(
         role: arguments['role'] ?? 'CASHIER',
         onChange: (index) {
@@ -44,34 +62,26 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   }
 
   void _handleAdminRole(int index, Map<String, String> arguments) {
-    log('ojan executed');
     setState(
       () {
         switch (index) {
           case 0:
-            log('ojan 0');
             _child = HomeScreen(email: arguments['email'] ?? 'Unknown');
             _selectedIndex = index;
             break;
           case 1:
-            log('ojan 1');
-            _child = const Center(
-              child: Text('InvoicePage'),
-            );
+            _child = const InvoiceScreen();
             _selectedIndex = index;
             break;
           case 2:
-            log('ojan 2');
-            _child = const ProductListScreen();
+            _child = const ProductListScreen(isAdmin: true);
             _selectedIndex = index;
             break;
           case 3:
-            log('ojan 3');
             _child = const CartScreen();
             _selectedIndex = index;
             break;
           case 4:
-            log('ojan 4');
             _child = ProfileScreen(
               email: arguments['email'] ?? 'null',
               role: arguments['role'] ?? 'null',
@@ -84,29 +94,22 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   }
 
   void _handleCashierRole(int index, Map<String, String> arguments) {
-    log('ojan executed');
     setState(
       () {
         switch (index) {
           case 0:
-            log('ojan 1');
-            _child = const Center(
-              child: Text('InvoicePage'),
-            );
+            _child = const InvoiceScreen();
             _selectedIndex = index;
             break;
           case 1:
-            log('ojan 2');
-            _child = const ProductListScreen();
+            _child = const ProductListScreen(isAdmin: false);
             _selectedIndex = index;
             break;
           case 2:
-            log('ojan 3');
             _child = const CartScreen();
             _selectedIndex = index;
             break;
           case 3:
-            log('ojan 4');
             _child = ProfileScreen(
               email: arguments['email'] ?? 'null',
               role: arguments['role'] ?? 'null',

@@ -15,46 +15,26 @@ class AddCashierScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<AddCashierCubit>(
       create: (context) => AddCashierCubit(),
-      child: const AddCashierContent(),
+      child: const _AddCashierContent(),
     );
   }
 }
 
-class AddCashierContent extends StatefulWidget {
-  const AddCashierContent({super.key});
+class _AddCashierContent extends StatefulWidget {
+  const _AddCashierContent();
 
   @override
-  State<AddCashierContent> createState() => _AddCashierContentState();
+  State<_AddCashierContent> createState() => _AddCashierContentState();
 }
 
-class _AddCashierContentState extends State<AddCashierContent> {
+class _AddCashierContentState extends State<_AddCashierContent> {
   final unfocusNode = FocusNode();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   late AddCashierCubit cubit;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    cubit = context.read<AddCashierCubit>();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: const AppBarWidget(
-            isHome: false, title: 'Tambah Pegawai', enableAction: false),
-        backgroundColor: Colors.white,
-        body: _buildBody(),
-      ),
-    );
-  }
-
-  SafeArea _buildBody() {
+  SafeArea _scaffoldBody() {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -99,7 +79,7 @@ class _AddCashierContentState extends State<AddCashierContent> {
               const SizedBox(
                 height: 16.0,
               ),
-              _buildAddButton(),
+              _addButton(),
             ],
           ),
         ),
@@ -107,7 +87,7 @@ class _AddCashierContentState extends State<AddCashierContent> {
     );
   }
 
-  Widget _buildAddButton() {
+  Widget _addButton() {
     return RoundedButtonWidget(
       title: 'Tambah Pegawai',
       onTap: () {
@@ -116,6 +96,26 @@ class _AddCashierContentState extends State<AddCashierContent> {
           password: passwordController.text.trim(),
         );
       },
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    cubit = context.read<AddCashierCubit>();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: const AppBarWidget(
+            isHome: false, title: 'Tambah Pegawai', enableAction: false),
+        backgroundColor: Colors.white,
+        body: _scaffoldBody(),
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:common/utils/currency_formatter.dart';
+import 'package:dependencies/cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../drawable/rounded_white_drawable.dart';
@@ -9,8 +10,11 @@ class RoundedProductContainer extends StatelessWidget {
   final String? image;
   final File? path;
   final String? name;
-  final String? price;
+  final int? price;
   final Function? addButtonTap;
+  final Function? onProductTap;
+  final bool isStockManager;
+  final String? stock;
   const RoundedProductContainer({
     super.key,
     this.image,
@@ -18,46 +22,79 @@ class RoundedProductContainer extends StatelessWidget {
     this.price,
     this.path,
     this.addButtonTap,
+    this.onProductTap,
+    this.isStockManager = false,
+    this.stock,
   });
 
   @override
   Widget build(BuildContext context) {
     const double borderRadius = 20;
 
-    return RoundedContainerDrawable(
-      radius: borderRadius,
-      padding: 0,
-      onTap: () {},
-      child: Stack(
+    return GestureDetector(
+      child: RoundedContainerDrawable(
+        radius: borderRadius,
+        padding: 0,
+        onTap: () {
+          if (onProductTap != null) {
+            onProductTap!();
+          }
+        },
+        child: Stack(
+          children: [
+            _buildImage(),
+            isStockManager
+                ? const SizedBox.shrink()
+                : _buildAddButton(borderRadius),
+            Align(
+                alignment: Alignment.bottomCenter, child: _buildProductInfo()),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _stockInfo() {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          _buildImage(),
-          _buildAddButton(borderRadius),
-          _buildProductInfo(),
+          const Text(
+            'Stock',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 8.0),
+          Text(stock ?? '0'),
         ],
       ),
     );
   }
 
-  Align _buildProductInfo() {
-    return Align(
-      alignment: const AlignmentDirectional(-1, 1),
-      child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 10),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 8),
-              child: Text(
-                name ?? '-',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+  Widget _buildProductInfo() {
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 10),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 8),
+                child: Text(
+                  name ?? '-',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            Text(formatRupiah(price ?? '0')),
-          ],
-        ),
+              Text(formatRupiah(price)),
+            ],
+          ),
+          isStockManager ? _stockInfo() : const SizedBox.shrink()
+        ],
       ),
     );
   }
@@ -105,17 +142,24 @@ class RoundedProductContainer extends StatelessWidget {
           topRight: Radius.circular(25),
         ),
         child: (path == null)
-            ? Image.network(
-                image ?? 'https://picsum.photos/seed/418/600',
-                width: 210,
+            ? CachedNetworkImage(
+                imageUrl: image ?? '',
+                width: 215,
                 height: 176,
-                fit: BoxFit.fitWidth,
+                filterQuality: FilterQuality.none,
+                maxHeightDiskCache: 176,
+                memCacheHeight: 176,
+                memCacheWidth: 215,
+                placeholder: (context, url) => (image == null)
+                    ? const Center(child: Text('Image'))
+                    : const SizedBox.shrink(),
+                errorWidget: (context, url, error) =>
+                    const Center(child: Icon(Icons.error)),
               )
             : Image.file(
                 path!,
-                width: 210,
+                width: 215,
                 height: 176,
-                fit: BoxFit.fitWidth,
               ),
       ),
     );
