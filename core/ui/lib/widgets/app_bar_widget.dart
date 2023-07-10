@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../const/colors_constants.dart';
 
-class AppBarWidget extends StatelessWidget with PreferredSizeWidget {
+class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final bool isHome;
   final String title;
   final bool enableAction;

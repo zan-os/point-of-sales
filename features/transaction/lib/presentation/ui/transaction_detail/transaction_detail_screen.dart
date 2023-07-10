@@ -4,6 +4,9 @@ import 'package:common/model/transaction_detail_model.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:common/utils/currency_formatter.dart';
 import 'package:dependencies/bloc/bloc.dart';
+import 'package:dependencies/pdf/pdf.dart' as pw;
+import 'package:dependencies/printing/printing.dart';
+import 'package:dependencies/screenshot/screenshot.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:transaction/presentation/cubit/transaction/transaction_cubit.dart';
@@ -29,8 +32,16 @@ class TransactionDetailScreen extends StatelessWidget {
   }
 }
 
-class _TransactionDetailContent extends StatelessWidget {
+class _TransactionDetailContent extends StatefulWidget {
   const _TransactionDetailContent();
+
+  @override
+  State<_TransactionDetailContent> createState() =>
+      _TransactionDetailContentState();
+}
+
+class _TransactionDetailContentState extends State<_TransactionDetailContent> {
+  final ScreenshotController _screenshotController = ScreenshotController();
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +83,12 @@ class _TransactionDetailContent extends StatelessWidget {
           padding: MediaQuery.of(context).viewInsets,
           children: [
             _header(state.transactionDetail.first.transaction),
-            _transactionDetail(state),
-            _doneButton(context, state.transactionDetail.first.transactionId)
+            Screenshot(
+              controller: _screenshotController,
+              child: _transactionDetail(state),
+            ),
+            _doneButton(context, state.transactionDetail.first.transactionId),
+            _printButton(context)
           ],
         ),
       ),
@@ -191,12 +206,50 @@ class _TransactionDetailContent extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: RoundedButtonWidget(
-          title: 'Selesai',
-          onTap: () {
-            context
-                .read<TransactionCubit>()
-                .updateTransactionStatus(id: transactionId);
-          }),
+        title: 'Selesai',
+        onTap: () {
+          context
+              .read<TransactionCubit>()
+              .updateTransactionStatus(id: transactionId);
+        },
+      ),
+    );
+  }
+
+  Padding _printButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: RoundedButtonWidget(
+        title: 'Cetak Transaksi',
+        onTap: () {
+          _screenshotController.capture(delay: const Duration(seconds: 1)).then(
+            (image) async {
+              log('$image');
+              final pdf = pw.Document();
+
+              pdf.addPage(
+                pw.Page(
+                  pageFormat: pw.PdfPageFormat.a4,
+                  build: (context) {
+                    return pw.Expanded(
+                      child: pw.Center(
+                        child: pw.Image(
+                          pw.MemoryImage(image!),
+                          fit: pw.BoxFit.fitWidth,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+
+              await Printing.layoutPdf(
+                onLayout: (format) async => pdf.save(),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
