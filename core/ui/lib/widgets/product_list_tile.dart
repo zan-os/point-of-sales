@@ -1,4 +1,3 @@
-
 import 'package:common/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:ui/const/colors_constants.dart';
@@ -8,12 +7,19 @@ class ProductListTile extends StatelessWidget {
   final String? productName;
   final int? productPrice;
   final String? productQty;
+  final bool inCart;
+  final Function? onAddTap;
+  final Function? onMinTap;
+
   const ProductListTile({
     super.key,
     required this.image,
     required this.productName,
     required this.productPrice,
     required this.productQty,
+    this.inCart = false,
+    this.onAddTap,
+    this.onMinTap,
   });
 
   @override
@@ -57,10 +63,43 @@ class ProductListTile extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text('Jumlah'),
                   const SizedBox(height: 16.0),
-                  Text(productQty ?? '0'),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      if (inCart)
+                        InkWell(
+                          onTap: () {
+                            if (onAddTap != null) {
+                              onAddTap!();
+                            }
+                          },
+                          child: const Icon(Icons.add_rounded),
+                        )
+                      else
+                        const SizedBox.shrink(),
+                      const SizedBox(width: 6.0),
+                      Text(
+                        productQty ?? '0',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      const SizedBox(width: 6.0),
+                      if (inCart)
+                        InkWell(
+                          onTap: () {
+                            if (onMinTap != null) {
+                              onMinTap!();
+                            }
+                          },
+                          child: const Icon(Icons.remove),
+                        )
+                      else
+                        const SizedBox.shrink(),
+                    ],
+                  ),
                 ],
               ),
             ),

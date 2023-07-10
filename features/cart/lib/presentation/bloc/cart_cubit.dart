@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cart/presentation/bloc/cart_state.dart';
+import 'package:common/model/product_model.dart';
 import 'package:common/utils/catch_error_logger.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
@@ -16,6 +17,7 @@ class CartCubit extends Cubit<CartState> {
   void init() {
     emit(state.copyWith(status: CubitState.loading));
     fetchCart();
+    emit(state.copyWith(status: CubitState.finishLoading));
   }
 
   void fetchCart() async {
@@ -47,9 +49,9 @@ class CartCubit extends Cubit<CartState> {
   void getTotalBill() async {
     try {
       final totalBill = await _supabase.rpc('get_total_bill').select();
-      emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(
           status: CubitState.initial, totalBill: int.parse(totalBill)));
+      emit(state.copyWith(status: CubitState.hasData));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
       emit(state.copyWith(status: CubitState.finishLoading));
@@ -104,5 +106,64 @@ class CartCubit extends Cubit<CartState> {
       emit(state.copyWith(
           status: CubitState.error, message: 'Gagal menghapus cart'));
     }
+  }
+
+  void addItemCart({required ProductModel product}) async {
+    try {
+      await _supabase.rpc(
+        'add_to_cart',
+        params: {'p_product_id': product.id, 'p_product_price': product.price},
+      ).then(
+        (value) {
+          emit(
+            state.copyWith(
+              status: CubitState.hasData,
+              message: 'Berhasil menambahkan barang',
+            ),
+          );
+
+          init();
+        },
+      );
+
+      emit(state.copyWith(status: CubitState.initial));
+    } catch (e, stacktrace) {
+      catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(
+          status: CubitState.error, message: 'Gagal menambahkan ke keranjang'));
+    }
+  }
+
+  void removeItemCart({required ProductModel product}) async {
+    try {
+      await _supabase.rpc(
+        'remove_one_item_cart',
+        params: {'p_product_id': product.id, 'p_product_price': product.price},
+      ).then(
+        (value) {
+          emit(
+            state.copyWith(
+              status: CubitState.hasData,
+              message: 'Berhasil menambahkan barang',
+            ),
+          );
+
+          fetchCart();
+        },
+      );
+
+      emit(state.copyWith(status: CubitState.initial));
+    } catch (e, stacktrace) {
+      catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(
+          status: CubitState.error, message: 'Gagal menambahkan ke keranjang'));
+    }
+  }
+
+  void deleteItem({required int id}) {
+    _supabase
+        .from('cart')
+        .delete()
+        .match({'id': id}).then((value) => fetchCart());
   }
 }

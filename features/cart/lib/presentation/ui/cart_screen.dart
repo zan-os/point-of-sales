@@ -36,6 +36,7 @@ class _CartScreenContent extends StatefulWidget {
 
 class _CartScreenContentState extends State<_CartScreenContent> {
   late CartCubit cubit;
+  bool enableButton = false;
 
   @override
   void initState() {
@@ -96,6 +97,11 @@ class _CartScreenContentState extends State<_CartScreenContent> {
                       showSnackBar('Gagal mendapatkan id transaksi',
                           isError: true),
                     );
+            }
+            if (state.status == CubitState.hasData) {
+              setState(() {
+                enableButton = true;
+              });
             }
           },
           builder: (context, state) {
@@ -206,7 +212,7 @@ class _CartScreenContentState extends State<_CartScreenContent> {
                         enable: state.cartDetail.isNotEmpty,
                         title: 'Bayar',
                         onTap: () {
-                          if (state.cartDetail.isNotEmpty) {
+                          if (state.cartDetail.isNotEmpty && enableButton) {
                             cubit.createOrder();
                           }
                           return;
@@ -231,10 +237,24 @@ class _CartScreenContentState extends State<_CartScreenContent> {
         final cart = state.cartDetail[index];
 
         return ProductListTile(
+          inCart: true,
           image: cart.product?.image ?? '',
           productName: cart.product?.name,
           productPrice: cart.productPrice ?? 0,
           productQty: cart.cartQty.toString(),
+          onAddTap: () {
+            log('${cart.product!.id}  ${cart.product!.price}');
+            cubit.addItemCart(product: cart.product!);
+          },
+          onMinTap: () {
+            if (cart.cartQty! <= 1) {
+              cubit.deleteItem(id: cart.id!);
+              return;
+            } else {
+              log('${cart.product!.id}  ${cart.product!.price}');
+              cubit.removeItemCart(product: cart.product!);
+            }
+          },
         );
       },
     );
