@@ -18,6 +18,7 @@ class CartCubit extends Cubit<CartState> {
     emit(state.copyWith(status: CubitState.loading));
     fetchCart();
     emit(state.copyWith(status: CubitState.finishLoading));
+    emit(state.copyWith(status: CubitState.initial));
   }
 
   void fetchCart() async {

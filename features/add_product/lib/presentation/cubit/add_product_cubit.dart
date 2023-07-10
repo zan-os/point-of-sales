@@ -105,7 +105,8 @@ class AddProductCubit extends Cubit<AddProductState> {
       log('porduct ==> $product[0]["id"]');
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
-      emit(state.copyWith(status: CubitState.error, message: e.toString()));
+      emit(state.copyWith(
+          status: CubitState.error, message: 'Gagal menambahkan produk'));
     }
   }
 }

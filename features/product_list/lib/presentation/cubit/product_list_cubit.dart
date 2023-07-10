@@ -87,7 +87,9 @@ class ProductListCubit extends Cubit<ProductListState> {
       categories.insert(
           0, CategoryModel(id: 0, name: 'All', createdAt: DateTime.now()));
 
-      emit(state.copyWith(status: CubitState.finishLoading));
+      emit(state.copyWith(
+          status: CubitState.finishLoading, categories: categories));
+      emit(state.copyWith(status: CubitState.initial));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
       emit(state.copyWith(
@@ -111,16 +113,34 @@ class ProductListCubit extends Cubit<ProductListState> {
 
   void addToCart({required ProductModel product}) async {
     try {
-      final response = await _supabase.rpc(
-        'add_to_cart',
-        params: {'p_product_id': product.id, 'p_product_price': product.price},
-      );
-      log('$response');
-      emit(state.copyWith(
-          status: CubitState.success,
-          message: 'Berhasil menambahkan ke keranjang'));
+      final response = await _supabase
+          .from('stock')
+          .select('*, product:product_id (*)')
+          .match({'product_id': product.id}).single();
 
-      emit(state.copyWith(status: CubitState.initial));
+      final encoded = jsonEncode(response);
+      final decoded = jsonDecode(encoded);
+      final stock = StockModel.fromJson(decoded);
+
+      if (stock.qty == 0) {
+        log('stock ${stock.qty}');
+        emit(state.copyWith(status: CubitState.error, message: 'Stock kosong'));
+      } else {
+        log('stock ${stock.qty}');
+        final response = await _supabase.rpc(
+          'add_to_cart',
+          params: {
+            'p_product_id': product.id,
+            'p_product_price': product.price
+          },
+        );
+        log('$response');
+        emit(state.copyWith(
+            status: CubitState.success,
+            message: 'Berhasil menambahkan ke keranjang'));
+
+        emit(state.copyWith(status: CubitState.initial));
+      }
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
       emit(state.copyWith(

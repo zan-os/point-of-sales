@@ -240,24 +240,23 @@ class _AddProductContentState extends State<_AddProductContent> {
   Widget _addButton() {
     return RoundedButtonWidget(
       title: 'Tambah Produk',
-      onTap: () => (_formValidator())
-          ? context.read<AddProductCubit>().uploadProduct(
-                name: nameController.text.trim(),
-                price: priceController.text.trim(),
-                stock: stockController.text.trim(),
-              )
-          : ScaffoldMessenger.of(context).showSnackBar(invalidFormSnackbar),
+      onTap: () {
+        final stock = stockController.text;
+        (_formValidator())
+            ? context.read<AddProductCubit>().uploadProduct(
+                  name: nameController.text.trim(),
+                  price: priceController.text.trim(),
+                  stock: (stock.isEmpty) ? '0' : stock,
+                )
+            : ScaffoldMessenger.of(context).showSnackBar(invalidFormSnackbar);
+      },
     );
   }
 
   bool _formValidator() {
     final name = nameController.text.trim();
     final price = priceController.text.trim();
-    final stock = stockController.text.trim();
-    if (name.isNotEmpty &&
-        price.isNotEmpty &&
-        stock.isNotEmpty &&
-        _image != null) {
+    if (name.isNotEmpty && price.isNotEmpty && _image != null) {
       return true;
     }
     return false;

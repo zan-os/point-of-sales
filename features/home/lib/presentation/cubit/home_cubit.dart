@@ -12,8 +12,6 @@ class HomeCubit extends Cubit<HomeState> {
 
   final _supabase = Supabase.instance.client;
 
-  // TODO: get total (product, out of stock product, transaction, income)
-
   void init() {
     getTotalProduct();
     getOutOfStockProduct();

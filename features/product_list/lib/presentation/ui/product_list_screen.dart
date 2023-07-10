@@ -89,8 +89,8 @@ class _ProductListContentState extends State<_ProductListContent> {
         builder: (context, state) => Column(
           children: [
             _buildSearchAndFilter(),
+            _buildCategoryList(categories: state.categories),
             if (state.productList.isNotEmpty) ...[
-              _buildCategoryList(categories: state.categories),
               _buildProductGrid(productList: state.productList),
             ]
           ],
@@ -142,6 +142,7 @@ class _ProductListContentState extends State<_ProductListContent> {
   }
 
   Widget _buildCategoryList({required List<CategoryModel> categories}) {
+    log('category ${categories.length}');
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
       child: Container(
