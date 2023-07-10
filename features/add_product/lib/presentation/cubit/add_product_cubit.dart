@@ -25,7 +25,6 @@ class AddProductCubit extends Cubit<AddProductState> {
       if (image == null) return;
       File? img = File(image.path);
       img = await cropImage(sourcePath: img);
-      log('image ==> ${state.image} state ==> ${state.status}');
     } catch (e) {
       log('Pick Image Error ==> $e');
       emit(state.copyWith(status: CubitState.error, message: e.toString()));
@@ -67,7 +66,6 @@ class AddProductCubit extends Cubit<AddProductState> {
 
   void setSelectedCategory({required CategoryModel categoryModel}) {
     emit(state.copyWith(selectedCategory: categoryModel));
-    log('${state.selectedCategory}');
   }
 
   void uploadProduct({
@@ -102,7 +100,6 @@ class AddProductCubit extends Cubit<AddProductState> {
 
       emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(status: CubitState.success));
-      log('porduct ==> $product[0]["id"]');
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
       emit(state.copyWith(

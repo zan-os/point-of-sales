@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:common/navigation/app_router.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:common/utils/currency_formatter.dart';
@@ -77,7 +75,6 @@ class _TransactionScreenContentState extends State<_TransactionScreenContent> {
               );
             }
             if (state.status == CubitState.hasData) {
-              log('success harusnya pindah');
               Navigator.popAndPushNamed(
                 context,
                 AppRouter.transactionDetail,

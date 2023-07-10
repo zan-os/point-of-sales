@@ -65,22 +65,8 @@ class _InvoiceScreenContentState extends State<_InvoiceScreenContent> {
               showSnackBar('Berhasil', isError: false),
             );
           }
-          // if (state.status == CubitState.hasData) {
-          //   log('success harusnya pindah');
-          //   Navigator.popAndPushNamed(
-          //     context,
-          //     AppRouter.transactionDetail,
-          //     arguments: state.transaction,
-          //   ).then((value) => Navigator.pop(context));
-          // }
           if (state.status == CubitState.loading) {
             FocusScope.of(context).requestFocus(unfocusNode);
-            // showDialog(
-            //   context: context,
-            //   barrierDismissible: false,
-            //   builder: (context) =>
-            //       LoadingAnimationWidget.inkDrop(color: Colors.white, size: 50),
-            // );
           }
           if (state.status == CubitState.finishLoading) {
             Navigator.pop(context);

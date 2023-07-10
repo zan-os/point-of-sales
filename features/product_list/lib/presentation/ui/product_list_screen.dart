@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:common/model/categories_model.dart';
 import 'package:common/model/product_model.dart';
 import 'package:common/navigation/app_router.dart';
@@ -55,7 +53,6 @@ class _ProductListContentState extends State<_ProductListContent> {
       child: BlocConsumer<ProductListCubit, ProductListState>(
         listener: (context, state) {
           if (state.status == CubitState.loading) {
-            log('called');
             showDialog(
               context: context,
               barrierDismissible: false,
@@ -83,7 +80,6 @@ class _ProductListContentState extends State<_ProductListContent> {
                 arguments: state.stock,
               ).then((value) => cubit.init()),
             );
-            log(' tes ${state.stock}');
           }
         },
         builder: (context, state) => Column(
@@ -142,7 +138,6 @@ class _ProductListContentState extends State<_ProductListContent> {
   }
 
   Widget _buildCategoryList({required List<CategoryModel> categories}) {
-    log('category ${categories.length}');
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
       child: Container(
@@ -176,7 +171,6 @@ class _ProductListContentState extends State<_ProductListContent> {
         setState(() {
           categoryIndex = index;
         });
-        log('index ==> $categoryIndex');
       },
       child: Padding(
         padding: const EdgeInsets.only(right: 12.0),

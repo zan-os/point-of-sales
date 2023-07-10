@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cart/presentation/bloc/cart_cubit.dart';
 import 'package:cart/presentation/bloc/cart_state.dart';
 import 'package:common/navigation/app_router.dart';
@@ -78,7 +76,6 @@ class _CartScreenContentState extends State<_CartScreenContent> {
               Navigator.pop(context);
             }
             if (state.status == CubitState.error) {
-              log('error');
               ScaffoldMessenger.of(context).showSnackBar(
                 showSnackBar(state.message, isError: true),
               );
@@ -243,7 +240,6 @@ class _CartScreenContentState extends State<_CartScreenContent> {
           productPrice: cart.productPrice ?? 0,
           productQty: cart.cartQty.toString(),
           onAddTap: () {
-            log('${cart.product!.id}  ${cart.product!.price}');
             cubit.addItemCart(product: cart.product!);
           },
           onMinTap: () {
@@ -251,7 +247,6 @@ class _CartScreenContentState extends State<_CartScreenContent> {
               cubit.deleteItem(id: cart.id!);
               return;
             } else {
-              log('${cart.product!.id}  ${cart.product!.price}');
               cubit.removeItemCart(product: cart.product!);
             }
           },

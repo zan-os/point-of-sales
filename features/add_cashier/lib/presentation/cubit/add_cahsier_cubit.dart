@@ -18,7 +18,6 @@ class AddCashierCubit extends Cubit<AddCashierState> {
       final response =
           await _supabase.auth.signUp(email: email, password: password);
       final userId = response.user?.id;
-      log('$userId');
       await _supabase
           .from('role')
           .insert({'user_id': userId, 'role_name': 'CASHIER'});

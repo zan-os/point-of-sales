@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cart/presentation/ui/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:home/presentation/ui/home_screen.dart';
@@ -64,32 +62,26 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   }
 
   void _handleAdminRole(int index, Map<String, String> arguments) {
-    log('ojan executed');
     setState(
       () {
         switch (index) {
           case 0:
-            log('ojan 0');
             _child = HomeScreen(email: arguments['email'] ?? 'Unknown');
             _selectedIndex = index;
             break;
           case 1:
-            log('ojan 1');
             _child = const InvoiceScreen();
             _selectedIndex = index;
             break;
           case 2:
-            log('ojan 2');
             _child = const ProductListScreen(isAdmin: true);
             _selectedIndex = index;
             break;
           case 3:
-            log('ojan 3');
             _child = const CartScreen();
             _selectedIndex = index;
             break;
           case 4:
-            log('ojan 4');
             _child = ProfileScreen(
               email: arguments['email'] ?? 'null',
               role: arguments['role'] ?? 'null',
@@ -102,27 +94,22 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   }
 
   void _handleCashierRole(int index, Map<String, String> arguments) {
-    log('ojan executed');
     setState(
       () {
         switch (index) {
           case 0:
-            log('ojan 1');
             _child = const InvoiceScreen();
             _selectedIndex = index;
             break;
           case 1:
-            log('ojan 2');
             _child = const ProductListScreen(isAdmin: false);
             _selectedIndex = index;
             break;
           case 2:
-            log('ojan 3');
             _child = const CartScreen();
             _selectedIndex = index;
             break;
           case 3:
-            log('ojan 4');
             _child = ProfileScreen(
               email: arguments['email'] ?? 'null',
               role: arguments['role'] ?? 'null',

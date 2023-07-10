@@ -1,12 +1,10 @@
-import 'dart:developer';
-
 import 'package:common/model/product_model.dart';
+import 'package:common/model/stock_model.dart';
 import 'package:common/navigation/app_router.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/loading_animation/loading_animation.dart';
 import 'package:flutter/material.dart';
-import 'package:common/model/stock_model.dart';
 import 'package:stock/presentation/cubit/stock_cubit.dart';
 import 'package:stock/presentation/cubit/stock_state.dart';
 import 'package:ui/helper/show_snackbar.dart';
@@ -120,7 +118,6 @@ class __StockScreenContentState extends State<_StockScreenContent> {
       child: BlocConsumer<StockCubit, StockState>(
         listener: (context, state) {
           if (state.status == CubitState.loading) {
-            log('called');
             showDialog(
               context: context,
               barrierDismissible: false,

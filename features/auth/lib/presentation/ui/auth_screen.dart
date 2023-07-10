@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:auth/presentation/cubit/auth_cubit.dart';
 import 'package:auth/presentation/cubit/auth_state.dart';
 import 'package:common/navigation/app_router.dart';
@@ -210,7 +208,6 @@ class _AuthScreenContentState extends State<_AuthScreenContent> {
           );
         }
         if (state.status == CubitState.error) {
-          log('error');
           ScaffoldMessenger.of(context).showSnackBar(
             showSnackBar(state.message, isError: true),
           );

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
@@ -23,7 +22,6 @@ class HomeCubit extends Cubit<HomeState> {
     final response = await _supabase.from('product').select();
     final encoded = jsonEncode(response);
     final List decoded = jsonDecode(encoded);
-    log('produk = ${decoded.length}');
     emit(state.copyWith(totalProduct: decoded.length));
   }
 
@@ -32,7 +30,6 @@ class HomeCubit extends Cubit<HomeState> {
         await _supabase.from('stock').select().filter('qty', 'eq', 0);
     final encoded = jsonEncode(response);
     final List decoded = jsonDecode(encoded);
-    log('out of stock = ${decoded.length}');
     emit(state.copyWith(outOfStockProduct: decoded.length));
   }
 
@@ -43,14 +40,12 @@ class HomeCubit extends Cubit<HomeState> {
         .filter('transaction_status', 'eq', 3);
     final encoded = jsonEncode(response);
     final List decoded = jsonDecode(encoded);
-    log('total transaction = ${decoded.length}');
     emit(state.copyWith(totalOrder: decoded.length));
   }
 
   void getTotalIncome() async {
     await _supabase.rpc('sum_payment_total').then((value) {
       emit(state.copyWith(totalIncome: value));
-      log('total income = $value');
     });
   }
 }

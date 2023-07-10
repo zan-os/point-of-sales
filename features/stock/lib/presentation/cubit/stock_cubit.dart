@@ -52,9 +52,7 @@ class StockCubit extends Cubit<StockState> {
       if (image == null) return;
       File? img = File(image.path);
       img = await cropImage(sourcePath: img);
-      log('image ==> ${state.image} state ==> ${state.status}');
     } catch (e) {
-      log('Pick Image Error ==> $e');
       emit(state.copyWith(status: CubitState.error, message: e.toString()));
     }
   }
@@ -95,7 +93,6 @@ class StockCubit extends Cubit<StockState> {
   void setSelectedCategory({required CategoryModel categoryModel}) {
     emit(state.copyWith(
         status: CubitState.initial, selectedCategory: categoryModel));
-    log(' ojan ${state.selectedCategory?.id}');
   }
 
   void updateProduct(
@@ -107,12 +104,9 @@ class StockCubit extends Cubit<StockState> {
       required String stock}) async {
     try {
       emit(state.copyWith(status: CubitState.loading));
-      log('ojan cat ${state.selectedCategoryId}');
       if (state.image?.path != null) {
         final imagePath =
             'images/product/${basename(state.image?.path ?? image)}${math.Random().nextInt(10000)}';
-
-        log('ojan image ${state.image?.path}');
 
         await _supabase.storage.from('pos').upload(
               imagePath,

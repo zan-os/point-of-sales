@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:common/model/categories_model.dart';
@@ -26,7 +25,6 @@ class ManageStockScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final FocusNode unfocusNode = FocusNode();
     final stock = ModalRoute.of(context)?.settings.arguments as StockModel;
-    log('ojjan ${stock.product!.name}');
     return BlocProvider<StockCubit>(
       create: (context) => StockCubit(),
       child: GestureDetector(

@@ -13,7 +13,6 @@ class AuthCubit extends Cubit<AuthenticateState> {
   final _supabase = Supabase.instance.client;
 
   void loginWithEmail(String email, String password) async {
-    log('email : $email password: $password');
       emit(state.copyWith(status: CubitState.loading));
 
     try {
@@ -24,7 +23,6 @@ class AuthCubit extends Cubit<AuthenticateState> {
 
       if (userId != null) {
         getRole(userId);
-        log('user id = $userId');
       }
     } on AuthException catch (e) {
       log('$e');
@@ -51,7 +49,6 @@ class AuthCubit extends Cubit<AuthenticateState> {
       emit(state.copyWith(
           status: CubitState.hasData, userId: userId, role: role));
       emit(state.copyWith(status: CubitState.success));
-      log('getrole state ==> ${state.status}');
     } catch (e) {
       log('$e');
       emit(state.copyWith(status: CubitState.finishLoading));

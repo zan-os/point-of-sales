@@ -26,7 +26,6 @@ class ProductListCubit extends Cubit<ProductListState> {
       // if searched product name is not empty and category id is not 0
       // it will search product by name and category id
       if (state.searchedProduct.isNotEmpty && state.selectedCategoryId != '0') {
-        log('1 query => ${state.searchedProduct} id => ${state.selectedCategoryId}');
         response = await _supabase
             .from('product')
             .select('*')
@@ -38,7 +37,6 @@ class ProductListCubit extends Cubit<ProductListState> {
       // it will search by product name only
       else if (state.searchedProduct.isNotEmpty &&
           state.selectedCategoryId == '0') {
-        log('2 query => ${state.searchedProduct}');
         response = await _supabase.from('product').select('*').filter(
               'name',
               'like',
@@ -50,7 +48,6 @@ class ProductListCubit extends Cubit<ProductListState> {
       // it will search by product category only
       else if (state.selectedCategoryId.isNotEmpty &&
           state.selectedCategoryId != '0') {
-        log('3 id => ${state.selectedCategoryId}');
         response = await _supabase.from('product').select('*').filter(
               'category_id',
               'eq',
@@ -61,7 +58,6 @@ class ProductListCubit extends Cubit<ProductListState> {
       // if searched product name and selected category id is empty,
       // it will search all product
       else {
-        log('4');
         response = await _supabase.from('product').select('*');
       }
       final encoded = jsonEncode(response);
@@ -123,18 +119,15 @@ class ProductListCubit extends Cubit<ProductListState> {
       final stock = StockModel.fromJson(decoded);
 
       if (stock.qty == 0) {
-        log('stock ${stock.qty}');
         emit(state.copyWith(status: CubitState.error, message: 'Stock kosong'));
       } else {
-        log('stock ${stock.qty}');
-        final response = await _supabase.rpc(
+        await _supabase.rpc(
           'add_to_cart',
           params: {
             'p_product_id': product.id,
             'p_product_price': product.price
           },
         );
-        log('$response');
         emit(state.copyWith(
             status: CubitState.success,
             message: 'Berhasil menambahkan ke keranjang'));

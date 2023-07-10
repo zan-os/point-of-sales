@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:common/model/transaction_detail_model.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:common/utils/currency_formatter.dart';
@@ -59,7 +57,6 @@ class _TransactionDetailContentState extends State<_TransactionDetailContent> {
               );
             }
             if (state.status == CubitState.success) {
-              log('berhasil');
               ScaffoldMessenger.of(context).showSnackBar(
                 showSnackBar('Transaksi Selesai', isError: false),
               );
@@ -224,7 +221,6 @@ class _TransactionDetailContentState extends State<_TransactionDetailContent> {
         onTap: () {
           _screenshotController.capture(delay: const Duration(seconds: 1)).then(
             (image) async {
-              log('$image');
               final pdf = pw.Document();
 
               pdf.addPage(
