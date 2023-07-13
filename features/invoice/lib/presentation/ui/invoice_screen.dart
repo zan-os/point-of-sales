@@ -76,11 +76,18 @@ class _InvoiceScreenContentState extends State<_InvoiceScreenContent> {
           if (state.status == CubitState.loading) {
             FocusScope.of(context).requestFocus(unfocusNode);
             showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) =>
-                  LoadingAnimationWidget.inkDrop(color: Colors.white, size: 50),
-            );
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => WillPopScope(
+              onWillPop: () async {
+                return false;
+              },
+              child: LoadingAnimationWidget.inkDrop(
+                color: Colors.white,
+                size: 50,
+              ),
+            ),
+          );
           }
           if (state.status == CubitState.finishLoading) {
             Navigator.pop(context);

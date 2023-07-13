@@ -59,11 +59,18 @@ class _ProductListContentState extends State<_ProductListContent> {
         listener: (context, state) {
           if (state.status == CubitState.loading) {
             showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) =>
-                  LoadingAnimationWidget.inkDrop(color: Colors.white, size: 50),
-            );
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => WillPopScope(
+              onWillPop: () async {
+                return false;
+              },
+              child: LoadingAnimationWidget.inkDrop(
+                color: Colors.white,
+                size: 50,
+              ),
+            ),
+          );
           }
           if (state.status == CubitState.finishLoading) {
             Navigator.pop(context);
