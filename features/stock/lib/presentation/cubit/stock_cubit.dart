@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
 
@@ -35,7 +34,6 @@ class StockCubit extends Cubit<StockState> {
       final productList = decoded.map((e) => StockModel.fromJson(e)).toList();
 
       emit(state.copyWith(status: CubitState.finishLoading));
-      log(encoded);
       emit(state.copyWith(status: CubitState.initial, stockList: productList));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
@@ -83,7 +81,6 @@ class StockCubit extends Cubit<StockState> {
       emit(state.copyWith(
           status: CubitState.finishLoading, categories: categories));
       emit(state.copyWith(status: CubitState.initial, categories: categories));
-      log(response);
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
       emit(state.copyWith(status: CubitState.error, message: e.toString()));
@@ -121,13 +118,13 @@ class StockCubit extends Cubit<StockState> {
           'image':
               'https://qfcfviouxxtwfutjzbxw.supabase.co/storage/v1/object/public/pos/$imagePath',
           'category_id': state.selectedCategory?.id ?? 1
-        }).match({'id': productId}).then((value) => log('$value'));
+        }).match({'id': productId});
       } else {
         await _supabase.from('product').update({
           'name': name,
           'price': price,
           'category_id': state.selectedCategory?.id ?? 1
-        }).match({'id': productId}).then((value) => log('$value'));
+        }).match({'id': productId});
       }
 
       await _supabase

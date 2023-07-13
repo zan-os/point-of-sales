@@ -21,8 +21,13 @@ class ProductListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<ProductListCubit>(
       create: (context) => ProductListCubit(),
-      child: _ProductListContent(
-        isAdmin: isAdmin,
+      child: WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: _ProductListContent(
+          isAdmin: isAdmin,
+        ),
       ),
     );
   }

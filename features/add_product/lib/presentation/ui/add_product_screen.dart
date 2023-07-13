@@ -24,9 +24,14 @@ class AddProductScreen extends StatelessWidget {
     final FocusNode unfocusNode = FocusNode();
     return BlocProvider<AddProductCubit>(
       create: (context) => AddProductCubit(),
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
-        child: const _AddProductContent(),
+      child: WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child: GestureDetector(
+          onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
+          child: const _AddProductContent(),
+        ),
       ),
     );
   }

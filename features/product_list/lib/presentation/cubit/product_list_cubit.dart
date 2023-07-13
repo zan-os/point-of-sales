@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:common/model/categories_model.dart';
 import 'package:common/model/product_model.dart';
@@ -64,7 +63,6 @@ class ProductListCubit extends Cubit<ProductListState> {
       final List decoded = jsonDecode(encoded);
       final productList = decoded.map((e) => ProductModel.fromJson(e)).toList();
 
-      log(encoded);
       emit(state.copyWith(productList: productList));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
@@ -155,7 +153,6 @@ class ProductListCubit extends Cubit<ProductListState> {
 
       emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(status: CubitState.hasData, stock: stock));
-      log(encoded);
       emit(state.copyWith(status: CubitState.initial));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);

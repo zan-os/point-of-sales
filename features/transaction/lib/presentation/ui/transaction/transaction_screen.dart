@@ -19,7 +19,11 @@ class TransactionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<TransactionCubit>(
       create: (context) => TransactionCubit(),
-      child: const _TransactionScreenContent(),
+      child: WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child: const _TransactionScreenContent()),
     );
   }
 }
@@ -33,7 +37,6 @@ class _TransactionScreenContent extends StatefulWidget {
 }
 
 class _TransactionScreenContentState extends State<_TransactionScreenContent> {
-  final unfocusNode = FocusNode();
   final TextEditingController _paymentController = TextEditingController();
   final TextEditingController _tableController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
@@ -65,44 +68,40 @@ class _TransactionScreenContentState extends State<_TransactionScreenContent> {
       appBar: const AppBarWidget(
           isHome: false, title: 'Transaksi', enableAction: false),
       backgroundColor: Colors.white,
-      body: GestureDetector(
-        onTap: () => Focus.of(context).requestFocus(unfocusNode),
-        child: BlocConsumer<TransactionCubit, TransactionState>(
-          listener: (context, state) {
-            if (state.status == CubitState.success) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                showSnackBar('Berhasil', isError: false),
-              );
-            }
-            if (state.status == CubitState.hasData) {
-              Navigator.popAndPushNamed(
-                context,
-                AppRouter.transactionDetail,
-                arguments: state.transactionDetail,
-              ).then((value) => Navigator.pop(context));
-            }
-            if (state.status == CubitState.loading) {
-              FocusScope.of(context).requestFocus(unfocusNode);
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => LoadingAnimationWidget.inkDrop(
-                    color: Colors.white, size: 50),
-              );
-            }
-            if (state.status == CubitState.finishLoading) {
-              Navigator.pop(context);
-            }
-            if (state.status == CubitState.error) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                showSnackBar(state.message, isError: true),
-              );
-            }
-          },
-          builder: (context, state) {
-            return _scaffoldBody();
-          },
-        ),
+      body: BlocConsumer<TransactionCubit, TransactionState>(
+        listener: (context, state) {
+          if (state.status == CubitState.success) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              showSnackBar('Berhasil', isError: false),
+            );
+          }
+          if (state.status == CubitState.hasData) {
+            Navigator.popAndPushNamed(
+              context,
+              AppRouter.transactionDetail,
+              arguments: state.transactionDetail,
+            ).then((value) => Navigator.pop(context));
+          }
+          if (state.status == CubitState.loading) {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) =>
+                  LoadingAnimationWidget.inkDrop(color: Colors.white, size: 50),
+            );
+          }
+          if (state.status == CubitState.finishLoading) {
+            Navigator.pop(context);
+          }
+          if (state.status == CubitState.error) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              showSnackBar(state.message, isError: true),
+            );
+          }
+        },
+        builder: (context, state) {
+          return _scaffoldBody();
+        },
       ),
     );
   }
@@ -198,16 +197,18 @@ class _TransactionScreenContentState extends State<_TransactionScreenContent> {
     final table = _tableController.text.trim();
     final phoneNumber = _phoneNumberController.text.trim();
     return RoundedButtonWidget(
-        title: 'Bayar',
-        onTap: () => (_formValidator())
-            ? cubit.updateTransaction(
-                totalBill: args['total_bill'],
-                id: args['transaction_id'] ?? '0',
-                receivedPayment: int.parse(payment),
-                phoneNumber: phoneNumber,
-                address: address,
-                table: int.parse(table))
-            : null);
+      title: 'Bayar',
+      onTap: () => (_formValidator())
+          ? cubit.updateTransaction(
+              totalBill: args['total_bill'],
+              id: args['transaction_id'] ?? '0',
+              receivedPayment: payment,
+              phoneNumber: phoneNumber,
+              address: address,
+              table: table,
+            )
+          : null,
+    );
   }
 
   bool _formValidator() {

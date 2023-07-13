@@ -21,7 +21,11 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<HomeCubit>(
       create: (context) => HomeCubit(),
-      child: HomeScreenContent(email: email),
+      child: WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child: HomeScreenContent(email: email)),
     );
   }
 }

@@ -15,7 +15,11 @@ class AddCashierScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<AddCashierCubit>(
       create: (context) => AddCashierCubit(),
-      child: const _AddCashierContent(),
+      child: WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child:const _AddCashierContent()),
     );
   }
 }

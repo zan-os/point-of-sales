@@ -20,7 +20,11 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<CartCubit>(
       create: (context) => CartCubit(),
-      child: const _CartScreenContent(),
+      child: WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child:const _CartScreenContent()),
     );
   }
 }

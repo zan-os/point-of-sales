@@ -21,7 +21,11 @@ class StockScreen extends StatelessWidget {
       create: (context) => StockCubit(),
       child: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
-        child: const _StockScreenContent(),
+        child: WillPopScope(
+            onWillPop: () async {
+              return false;
+            },
+            child: const _StockScreenContent()),
       ),
     );
   }

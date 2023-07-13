@@ -25,7 +25,11 @@ class TransactionDetailScreen extends StatelessWidget {
     return BlocProvider<TransactionCubit>(
       create: (context) =>
           TransactionCubit()..emitTransactionDetail(transaction),
-      child: const _TransactionDetailContent(),
+      child: WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child: const _TransactionDetailContent()),
     );
   }
 }

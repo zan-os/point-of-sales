@@ -30,9 +30,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
           _child = HomeScreen(email: arguments['email'] ?? '');
         }
         if (arguments['role'] == 'CASHIER') {
-          _child = const Center(
-            child: Text('InvoicePage'),
-          );
+          _child = const InvoiceScreen();
         }
       });
     });

@@ -18,7 +18,11 @@ class AuthScreen extends StatelessWidget {
     return BlocProvider<AuthCubit>(
       create: (context) => AuthCubit(),
       lazy: true,
-      child: const _AuthScreenContent(),
+      child: WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child: const _AuthScreenContent()),
     );
   }
 }
