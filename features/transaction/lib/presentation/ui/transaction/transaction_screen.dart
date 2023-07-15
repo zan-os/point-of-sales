@@ -42,6 +42,8 @@ class _TransactionScreenContentState extends State<_TransactionScreenContent> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
 
+  final requestFocus = FocusNode();
+
   late TransactionCubit cubit;
   late Map<String, dynamic> args;
 
@@ -76,6 +78,7 @@ class _TransactionScreenContentState extends State<_TransactionScreenContent> {
             );
           }
           if (state.status == CubitState.hasData) {
+            cubit.updateTransactionStatus(id: args['transaction_id'] ?? '0');
             Navigator.popAndPushNamed(
               context,
               AppRouter.transactionDetail,
@@ -84,18 +87,18 @@ class _TransactionScreenContentState extends State<_TransactionScreenContent> {
           }
           if (state.status == CubitState.loading) {
             showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => WillPopScope(
-              onWillPop: () async {
-                return false;
-              },
-              child: LoadingAnimationWidget.inkDrop(
-                color: Colors.white,
-                size: 50,
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => WillPopScope(
+                onWillPop: () async {
+                  return false;
+                },
+                child: LoadingAnimationWidget.inkDrop(
+                  color: Colors.white,
+                  size: 50,
+                ),
               ),
-            ),
-          );
+            );
           }
           if (state.status == CubitState.finishLoading) {
             Navigator.pop(context);
@@ -204,18 +207,21 @@ class _TransactionScreenContentState extends State<_TransactionScreenContent> {
     final table = _tableController.text.trim();
     final phoneNumber = _phoneNumberController.text.trim();
     return RoundedButtonWidget(
-      title: 'Bayar',
-      onTap: () => (_formValidator())
-          ? cubit.updateTransaction(
+        title: 'Bayar',
+        onTap: () {
+          if (_formValidator()) {
+            cubit.updateTransaction(
               totalBill: args['total_bill'],
               id: args['transaction_id'] ?? '0',
               receivedPayment: payment,
               phoneNumber: phoneNumber,
               address: address,
               table: table,
-            )
-          : null,
-    );
+            );
+          } else {
+            null;
+          }
+        });
   }
 
   bool _formValidator() {

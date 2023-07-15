@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:transaction/presentation/cubit/transaction/transaction_cubit.dart';
 import 'package:ui/const/colors_constants.dart';
 import 'package:ui/helper/show_snackbar.dart';
+import 'package:ui/widgets/app_bar_widget.dart';
 import 'package:ui/widgets/product_list_tile.dart';
 import 'package:ui/widgets/rounded_button_widget.dart';
 
@@ -48,7 +49,7 @@ class _TransactionDetailContentState extends State<_TransactionDetailContent> {
   @override
   Widget build(BuildContext context) {
     final FocusNode unfocusNode = FocusNode();
-    return Scaffold(
+    return Scaffold(appBar: AppBarWidget(isHome: false, title: '', enableLeading: true),
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: GestureDetector(

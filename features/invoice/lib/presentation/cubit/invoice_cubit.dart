@@ -63,6 +63,7 @@ class InvoiceCubit extends Cubit<InvoiceState> {
           final transactionDetail =
               decoded.map((e) => TransactionDetailModel.fromJson(e)).toList();
 
+          emit(state.copyWith(status: CubitState.finishLoading));
           emit(state.copyWith(
               status: CubitState.success,
               transactionDetail: transactionDetail));

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:common/model/transaction_detail_model.dart';
 import 'package:common/utils/catch_error_logger.dart';
@@ -78,6 +79,8 @@ class TransactionCubit extends Cubit<TransactionState> {
           .filter('transaction_id', 'eq', id)
           .then(
         (response) {
+          updateTransactionStatus(id: id);
+
           final encoded = jsonEncode(response);
           final List decoded = jsonDecode(encoded);
           final transactionDetail =
@@ -98,15 +101,11 @@ class TransactionCubit extends Cubit<TransactionState> {
   }
 
   void updateTransactionStatus({required int id}) async {
-    emit(state.copyWith(status: CubitState.loading));
+    log('executed');
     try {
       _supabase
           .from('transaction')
-          .update({'transaction_status': 3})
-          .eq('id', id)
-          .then((value) {
-            emit(state.copyWith(status: CubitState.success));
-          });
+          .update({'transaction_status': 3}).eq('id', id);
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
       emit(state.copyWith(
