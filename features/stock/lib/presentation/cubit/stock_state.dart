@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:common/model/categories_model.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/equatable/equatable.dart';
-import 'package:common/model/stock_model.dart';
+
+import '../../data/model/stock_model.dart';
 
 class StockState extends Equatable {
   final CubitState status;

@@ -40,6 +40,7 @@ class CartCubit extends Cubit<CartState> {
       });
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(
           status: CubitState.error, message: 'Gagal mendapatkan kategori'));
     }
@@ -55,6 +56,7 @@ class CartCubit extends Cubit<CartState> {
       emit(state.copyWith(status: CubitState.hasData));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(
           status: CubitState.error, message: 'Gagal mendapatkan total bill'));
     }

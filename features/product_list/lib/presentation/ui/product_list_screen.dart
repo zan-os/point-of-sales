@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:common/model/categories_model.dart';
 import 'package:common/model/product_model.dart';
 import 'package:common/navigation/app_router.dart';

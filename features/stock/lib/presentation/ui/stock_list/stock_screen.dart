@@ -1,5 +1,3 @@
-import 'package:common/model/product_model.dart';
-import 'package:common/model/stock_model.dart';
 import 'package:common/navigation/app_router.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
@@ -10,6 +8,8 @@ import 'package:stock/presentation/cubit/stock_state.dart';
 import 'package:ui/helper/show_snackbar.dart';
 import 'package:ui/widgets/app_bar_widget.dart';
 import 'package:ui/widgets/rounded_product_container.dart';
+
+import '../../../data/model/stock_model.dart';
 
 class StockScreen extends StatelessWidget {
   const StockScreen({super.key});
@@ -80,11 +80,9 @@ class __StockScreenContentState extends State<_StockScreenContent> {
         shrinkWrap: true,
         itemCount: stockList.length,
         itemBuilder: (context, index) {
-          final product = stockList[index].product;
           final stock = stockList[index];
           return _productItem(
             context: context,
-            product: product!,
             stock: stock,
           );
         },
@@ -94,7 +92,6 @@ class __StockScreenContentState extends State<_StockScreenContent> {
 
   Widget _productItem({
     required BuildContext context,
-    required ProductModel product,
     required StockModel stock,
   }) {
     return Padding(
@@ -107,11 +104,11 @@ class __StockScreenContentState extends State<_StockScreenContent> {
             arguments: stock,
           ).then((value) => cubit.fetchProductList());
         },
-        name: product.name,
-        price: product.price,
-        image: product.image,
+        name: stock.productName,
+        price:stock.productPrice,
+        image: stock.productImage,
         isStockManager: true,
-        stock: stock.qty.toString(),
+        stock: stock.stockQty.toString(),
       ),
     );
   }

@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:common/model/categories_model.dart';
-import 'package:common/model/stock_model.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/image_manager/image_manager.dart';
@@ -18,6 +16,8 @@ import 'package:ui/widgets/round_bordered_text_field.dart';
 import 'package:ui/widgets/rounded_button_widget.dart';
 import 'package:ui/widgets/rounded_product_container.dart';
 
+import '../../../data/model/stock_model.dart';
+
 class ManageStockScreen extends StatelessWidget {
   const ManageStockScreen({super.key});
 
@@ -30,10 +30,10 @@ class ManageStockScreen extends StatelessWidget {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
         child: WillPopScope(
-          onWillPop: () async {
-            return false;
-          },
-          child: _ManageStockContent(stock)),
+            onWillPop: () async {
+              return false;
+            },
+            child: _ManageStockContent(stock)),
       ),
     );
   }
@@ -61,10 +61,12 @@ class _ManageStockContentState extends State<_ManageStockContent> {
     backgroundColor: CupertinoColors.systemRed,
   );
 
-  static const uploadSuccess = SnackBar(
-    content: Text('Berhasil mengedit produk'),
-    backgroundColor: CupertinoColors.systemGreen,
-  );
+  SnackBar _showSnackbar(String message) {
+    return SnackBar(
+      content: Text(message),
+      backgroundColor: CupertinoColors.systemGreen,
+    );
+  }
 
   String _name = '-';
 
@@ -77,13 +79,13 @@ class _ManageStockContentState extends State<_ManageStockContent> {
   late StockModel stock;
 
   void initData() {
-    _name = stock.product?.name ?? '';
-    _price = stock.product?.price ?? 0;
-    _imageUrl = stock.product?.image;
-    nameController.text = stock.product?.name ?? '';
-    priceController.text = stock.product?.price.toString() ?? '';
-    categoryController.text = stock.product?.categoryId.toString() ?? '';
-    stockController.text = stock.qty.toString();
+    _name = stock.productName ?? '';
+    _price = stock.productPrice ?? 0;
+    _imageUrl = stock.productImage;
+    nameController.text = stock.productName ?? '';
+    priceController.text = stock.productPrice.toString();
+    categoryController.text = stock.categoryName.toString();
+    stockController.text = stock.stockQty.toString();
   }
 
   void _showImageSourcePicker() {
@@ -328,24 +330,25 @@ class _ManageStockContentState extends State<_ManageStockContent> {
             });
           }
           if (state.status == CubitState.success) {
-            ScaffoldMessenger.of(context).showSnackBar(uploadSuccess);
+            ScaffoldMessenger.of(context)
+                .showSnackBar(_showSnackbar(state.message));
             Navigator.pop(context);
           }
           if (state.status == CubitState.loading) {
             FocusScope.of(context).requestFocus(unfocusNode);
             showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => WillPopScope(
-              onWillPop: () async {
-                return false;
-              },
-              child: LoadingAnimationWidget.inkDrop(
-                color: Colors.white,
-                size: 50,
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => WillPopScope(
+                onWillPop: () async {
+                  return false;
+                },
+                child: LoadingAnimationWidget.inkDrop(
+                  color: Colors.white,
+                  size: 50,
+                ),
               ),
-            ),
-          );
+            );
           }
           if (state.status == CubitState.finishLoading) {
             Navigator.pop(context);

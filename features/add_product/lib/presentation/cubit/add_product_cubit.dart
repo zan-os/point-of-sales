@@ -27,6 +27,7 @@ class AddProductCubit extends Cubit<AddProductState> {
       img = await cropImage(sourcePath: img);
     } catch (e) {
       log('Pick Image Error ==> $e');
+      emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(status: CubitState.error, message: e.toString()));
     }
   }
@@ -59,6 +60,7 @@ class AddProductCubit extends Cubit<AddProductState> {
       emit(state.copyWith(status: CubitState.initial));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(status: CubitState.error, message: e.toString()));
     }
   }
@@ -101,6 +103,7 @@ class AddProductCubit extends Cubit<AddProductState> {
       emit(state.copyWith(status: CubitState.success));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(
           status: CubitState.error, message: 'Gagal menambahkan produk'));
     }

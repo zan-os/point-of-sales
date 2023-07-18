@@ -86,6 +86,7 @@ class ProductListCubit extends Cubit<ProductListState> {
       emit(state.copyWith(status: CubitState.initial));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(
           status: CubitState.error, message: 'Gagal menambahkan ke keranjang'));
     }
@@ -156,6 +157,7 @@ class ProductListCubit extends Cubit<ProductListState> {
       emit(state.copyWith(status: CubitState.initial));
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(
           status: CubitState.error, message: 'Gagal mendapatkan produk'));
     }
