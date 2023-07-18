@@ -20,6 +20,9 @@ dependencies:
   add_product:
     path: features/add_product
 
+  product_list:
+    path: features/product_list
+
   add_cashier:
     path: features/add_cashier
 

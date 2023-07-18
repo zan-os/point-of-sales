@@ -688,7 +688,7 @@ packages:
     source: hosted
     version: "4.2.4"
   product_list:
-    dependency: transitive
+    dependency: "direct main"
     description:
       path: "features/product_list"
       relative: true

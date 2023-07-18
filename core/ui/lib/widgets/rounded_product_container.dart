@@ -15,6 +15,8 @@ class RoundedProductContainer extends StatelessWidget {
   final Function? onProductTap;
   final bool isStockManager;
   final String? stock;
+  final bool onRoot;
+
   const RoundedProductContainer({
     super.key,
     this.image,
@@ -25,6 +27,7 @@ class RoundedProductContainer extends StatelessWidget {
     this.onProductTap,
     this.isStockManager = false,
     this.stock,
+    this.onRoot = true,
   });
 
   @override
@@ -43,7 +46,7 @@ class RoundedProductContainer extends StatelessWidget {
         child: Stack(
           children: [
             _buildImage(),
-            isStockManager
+            (isStockManager || !onRoot)
                 ? const SizedBox.shrink()
                 : _buildAddButton(borderRadius),
             Align(

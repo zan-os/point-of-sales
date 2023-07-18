@@ -15,7 +15,11 @@ class AddCashierScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<AddCashierCubit>(
       create: (context) => AddCashierCubit(),
-      child: const _AddCashierContent(),
+      child: WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child:const _AddCashierContent()),
     );
   }
 }
@@ -42,11 +46,18 @@ class _AddCashierContentState extends State<_AddCashierContent> {
           listener: (context, state) {
             if (state.status == CubitState.loading) {
               showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => LoadingAnimationWidget.inkDrop(
-                    color: Colors.white, size: 50),
-              );
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => WillPopScope(
+              onWillPop: () async {
+                return false;
+              },
+              child: LoadingAnimationWidget.inkDrop(
+                color: Colors.white,
+                size: 50,
+              ),
+            ),
+          );
             }
 
             if (state.status == CubitState.finishLoading) {

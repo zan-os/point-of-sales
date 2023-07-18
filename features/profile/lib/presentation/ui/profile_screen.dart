@@ -65,11 +65,12 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final unfocusNode = FocusNode();
 
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
-      child: Scaffold(
+    return WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child:Scaffold(
         key: navigatorKey,
         appBar: const AppBarWidget(
           isHome: false,

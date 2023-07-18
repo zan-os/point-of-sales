@@ -18,7 +18,11 @@ class AuthScreen extends StatelessWidget {
     return BlocProvider<AuthCubit>(
       create: (context) => AuthCubit(),
       lazy: true,
-      child: const _AuthScreenContent(),
+      child: WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child: const _AuthScreenContent()),
     );
   }
 }
@@ -186,8 +190,15 @@ class _AuthScreenContentState extends State<_AuthScreenContent> {
           showDialog(
             context: context,
             barrierDismissible: false,
-            builder: (context) =>
-                LoadingAnimationWidget.inkDrop(color: Colors.white, size: 50),
+            builder: (context) => WillPopScope(
+              onWillPop: () async {
+                return false;
+              },
+              child: LoadingAnimationWidget.inkDrop(
+                color: Colors.white,
+                size: 50,
+              ),
+            ),
           );
         }
         if (state.status == CubitState.finishLoading) {

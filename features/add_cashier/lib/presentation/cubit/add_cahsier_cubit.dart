@@ -25,6 +25,7 @@ class AddCashierCubit extends Cubit<AddCashierState> {
       emit(state.copyWith(status: CubitState.hasData));
     } catch (e) {
       log(e.toString());
+      emit(state.copyWith(status: CubitState.finishLoading));
     }
   }
 }

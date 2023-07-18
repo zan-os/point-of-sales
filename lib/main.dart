@@ -5,6 +5,8 @@ import 'package:bottom_navigation/presentation/ui/bottom_navigation.dart';
 import 'package:common/navigation/app_router.dart';
 import 'package:dependencies/supabase/supabase.dart';
 import 'package:flutter/material.dart';
+import 'package:invoice/presentation/ui/invoice_screen.dart';
+import 'package:product_list/presentation/ui/product_list_screen.dart';
 import 'package:stock/presentation/ui/manage_stock/manage_stock_screen.dart';
 import 'package:stock/presentation/ui/stock_list/stock_screen.dart';
 import 'package:transaction/presentation/ui/transaction/transaction_screen.dart';
@@ -40,6 +42,8 @@ class MyApp extends StatelessWidget {
         AppRouter.transactionDetail: (context) => TransactionDetailScreen(),
         AppRouter.stock: (context) => StockScreen(),
         AppRouter.stockManager: (context) => ManageStockScreen(),
+        AppRouter.invoice: (context) => InvoiceScreen(),
+        AppRouter.productList: (context) => ProductListScreen(),
       },
     );
   }

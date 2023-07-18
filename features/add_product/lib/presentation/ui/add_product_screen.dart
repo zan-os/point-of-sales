@@ -24,9 +24,14 @@ class AddProductScreen extends StatelessWidget {
     final FocusNode unfocusNode = FocusNode();
     return BlocProvider<AddProductCubit>(
       create: (context) => AddProductCubit(),
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
-        child: const _AddProductContent(),
+      child: WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child: GestureDetector(
+          onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
+          child: const _AddProductContent(),
+        ),
       ),
     );
   }
@@ -295,11 +300,18 @@ class _AddProductContentState extends State<_AddProductContent> {
           if (state.status == CubitState.loading) {
             FocusScope.of(context).requestFocus(unfocusNode);
             showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) =>
-                  LoadingAnimationWidget.inkDrop(color: Colors.white, size: 50),
-            );
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => WillPopScope(
+              onWillPop: () async {
+                return false;
+              },
+              child: LoadingAnimationWidget.inkDrop(
+                color: Colors.white,
+                size: 50,
+              ),
+            ),
+          );
           }
           if (state.status == CubitState.finishLoading) {
             Navigator.pop(context);

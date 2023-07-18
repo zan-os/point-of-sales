@@ -1,8 +1,10 @@
 import 'package:common/model/transaction_detail_model.dart';
+import 'package:common/navigation/app_router.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:common/utils/currency_formatter.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/intl/intl.dart';
+import 'package:dependencies/loading_animation/loading_animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:invoice/presentation/cubit/invoice_cubit.dart';
@@ -18,7 +20,11 @@ class InvoiceScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<InvoiceCubit>(
       create: (context) => InvoiceCubit(),
-      child: const _InvoiceScreenContent(),
+      child: WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child: const _InvoiceScreenContent()),
     );
   }
 }
@@ -56,17 +62,35 @@ class _InvoiceScreenContentState extends State<_InvoiceScreenContent> {
       appBar: const AppBarWidget(
         isHome: false,
         title: 'Transaction History',
-        enableLeading: false,
+        enableLeading: true,
       ),
       body: BlocConsumer<InvoiceCubit, InvoiceState>(
         listener: (context, state) {
           if (state.status == CubitState.success) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              showSnackBar('Berhasil', isError: false),
+            Navigator.pushNamed(
+              context,
+              AppRouter.transactionDetail,
+              arguments: {
+                'transaction': state.transactionDetail,
+                'history': true
+              },
             );
           }
           if (state.status == CubitState.loading) {
             FocusScope.of(context).requestFocus(unfocusNode);
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => WillPopScope(
+                onWillPop: () async {
+                  return false;
+                },
+                child: LoadingAnimationWidget.inkDrop(
+                  color: Colors.white,
+                  size: 50,
+                ),
+              ),
+            );
           }
           if (state.status == CubitState.finishLoading) {
             Navigator.pop(context);
@@ -91,18 +115,20 @@ class _InvoiceScreenContentState extends State<_InvoiceScreenContent> {
       children: [
         BlocBuilder<InvoiceCubit, InvoiceState>(
           builder: (context, state) {
-            if (state.status == CubitState.hasData) {
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  final transaction = state.transaction[index];
-                  return _transactionListTile(transaction);
-                },
-                itemCount: state.transaction.length,
+            if (state.status == CubitState.noData) {
+              return const Center(
+                child: Text('Belum ada transaksi yang dibuat'),
               );
             }
-            return Container();
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                final transaction = state.transaction[index];
+                return _transactionListTile(transaction);
+              },
+              itemCount: state.transaction.length,
+            );
           },
         )
       ],
@@ -110,51 +136,56 @@ class _InvoiceScreenContentState extends State<_InvoiceScreenContent> {
   }
 
   Widget _transactionListTile(TransactionModel transaction) {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      margin: const EdgeInsets.only(bottom: 24.0),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: ColorConstants.whiteBackground),
-      child: Column(
-        children: [
-          _invoiceCardHeader(transaction),
-          _invoiceDivider(),
-          _invoiceContent(
-            title: 'Order Id',
-            content: transaction.orderId,
-          ),
-          _invoiceContent(
-            title: 'No. Telepon',
-            content: transaction.telephone.toString(),
-          ),
-          _invoiceContent(
-            title: 'No. Meja',
-            content: transaction.table.toString(),
-          ),
-          _invoiceContent(
-            title: 'Alamat',
-            content: transaction.address,
-          ),
-          _invoiceContent(
-            title: 'No. Telepon',
-            content: transaction.telephone,
-          ),
-          _invoiceDivider(),
-          _invoiceContent(
-            title: 'Uang yang diterma',
-            content: formatRupiah(transaction.receivedPaymentTotal),
-          ),
-          _invoiceContent(
-            title: 'Total Tagihan',
-            content: formatRupiah(transaction.paymentTotal),
-          ),
-          _invoiceContent(
-            title: 'Kembalian',
-            content: formatRupiah(
-                transaction.receivedPaymentTotal - transaction.paymentTotal),
-          ),
-        ],
+    return InkWell(
+      onTap: () {
+        cubit.fetchTransaction(id: transaction.id);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        margin: const EdgeInsets.only(bottom: 24.0),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: ColorConstants.whiteBackground),
+        child: Column(
+          children: [
+            _invoiceCardHeader(transaction),
+            _invoiceDivider(),
+            _invoiceContent(
+              title: 'Order Id',
+              content: transaction.orderId,
+            ),
+            _invoiceContent(
+              title: 'No. Telepon',
+              content: transaction.telephone.toString(),
+            ),
+            _invoiceContent(
+              title: 'No. Meja',
+              content: transaction.table.toString(),
+            ),
+            _invoiceContent(
+              title: 'Alamat',
+              content: transaction.address,
+            ),
+            _invoiceContent(
+              title: 'No. Telepon',
+              content: transaction.telephone,
+            ),
+            _invoiceDivider(),
+            _invoiceContent(
+              title: 'Uang yang diterma',
+              content: formatRupiah(transaction.receivedPaymentTotal),
+            ),
+            _invoiceContent(
+              title: 'Total Tagihan',
+              content: formatRupiah(transaction.paymentTotal),
+            ),
+            _invoiceContent(
+              title: 'Kembalian',
+              content: formatRupiah(
+                  transaction.receivedPaymentTotal - transaction.paymentTotal),
+            ),
+          ],
+        ),
       ),
     );
   }

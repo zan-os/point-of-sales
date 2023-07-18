@@ -7,12 +7,15 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final bool enableAction;
   final bool enableLeading;
+  final bool onRoot;
+
   const AppBarWidget({
     super.key,
     required this.isHome,
     required this.title,
     this.enableAction = true,
     this.enableLeading = true,
+    this.onRoot = false,
   });
 
   @override
@@ -22,7 +25,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: isHome ? null : Colors.transparent,
-      leading: isHome || !enableLeading
+      leading: (isHome || onRoot || !enableLeading)
           ? null
           : Padding(
               padding: const EdgeInsets.only(left: 16.0),

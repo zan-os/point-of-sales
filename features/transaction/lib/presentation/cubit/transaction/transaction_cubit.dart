@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'dart:developer';
 
+import 'package:common/model/transaction_detail_model.dart';
 import 'package:common/utils/catch_error_logger.dart';
 import 'package:common/utils/cubit_state.dart';
 import 'package:dependencies/bloc/bloc.dart';
 import 'package:dependencies/supabase/supabase.dart';
-import 'package:common/model/transaction_detail_model.dart';
 
 import '../transaction_state.dart';
 
@@ -33,12 +32,12 @@ class TransactionCubit extends Cubit<TransactionState> {
 
   void updateTransaction(
       {required int id,
-      required int receivedPayment,
+      required String receivedPayment,
       required String phoneNumber,
       required String address,
-      required int table,
+      required String table,
       required int totalBill}) async {
-    if (checkPayment(totalBill, receivedPayment)) {
+    if (checkPayment(totalBill, int.parse(receivedPayment))) {
       try {
         emit(state.copyWith(status: CubitState.loading));
         await _supabase.rpc('update_transaction', params: {
@@ -46,7 +45,7 @@ class TransactionCubit extends Cubit<TransactionState> {
           'p_received_payment_total': receivedPayment,
           'p_telephone': phoneNumber,
           'p_address': address,
-          'p_table': table
+          'p_table': int.tryParse(table)
         }).then((value) => deleteAllCart(transactionId: id));
         emit(state.copyWith(status: CubitState.success));
       } catch (e, stacktrace) {
@@ -79,6 +78,8 @@ class TransactionCubit extends Cubit<TransactionState> {
           .filter('transaction_id', 'eq', id)
           .then(
         (response) {
+          updateTransactionStatus(id: id);
+
           final encoded = jsonEncode(response);
           final List decoded = jsonDecode(encoded);
           final transactionDetail =
@@ -87,7 +88,6 @@ class TransactionCubit extends Cubit<TransactionState> {
           emit(state.copyWith(
               status: CubitState.hasData,
               transactionDetail: transactionDetail));
-          log(encoded);
         },
       );
     } catch (e, stacktrace) {
@@ -100,15 +100,10 @@ class TransactionCubit extends Cubit<TransactionState> {
   }
 
   void updateTransactionStatus({required int id}) async {
-    emit(state.copyWith(status: CubitState.loading));
     try {
       _supabase
           .from('transaction')
-          .update({'transaction_status': 3})
-          .eq('id', id)
-          .then((value) {
-            emit(state.copyWith(status: CubitState.success));
-          });
+          .update({'transaction_status': 3}).eq('id', id);
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
       emit(state.copyWith(

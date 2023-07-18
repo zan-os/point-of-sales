@@ -36,12 +36,11 @@ class CartCubit extends Cubit<CartState> {
 
         if (cartDetail.isNotEmpty) {
           getTotalBill();
-        } else if (cartDetail.isEmpty) {
-          emit(state.copyWith(status: CubitState.finishLoading));
         }
       });
     } catch (e, stacktrace) {
       catchErrorLogger(e, stacktrace);
+      emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(
           status: CubitState.error, message: 'Gagal mendapatkan kategori'));
     }
@@ -49,7 +48,9 @@ class CartCubit extends Cubit<CartState> {
 
   void getTotalBill() async {
     try {
+      emit(state.copyWith(status: CubitState.loading));
       final totalBill = await _supabase.rpc('get_total_bill').select();
+      emit(state.copyWith(status: CubitState.finishLoading));
       emit(state.copyWith(
           status: CubitState.initial, totalBill: int.parse(totalBill)));
       emit(state.copyWith(status: CubitState.hasData));

@@ -25,15 +25,10 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
       setState(() {
         arguments =
             ModalRoute.of(context)?.settings.arguments as Map<String, String>;
-
-        if (arguments['role'] == 'ADMIN') {
-          _child = HomeScreen(email: arguments['email'] ?? '');
-        }
-        if (arguments['role'] == 'CASHIER') {
-          _child = const Center(
-            child: Text('InvoicePage'),
-          );
-        }
+        _child = HomeScreen(
+          email: arguments['email'] ?? '',
+          role: arguments['role'] ?? '',
+        );
       });
     });
     super.initState();
@@ -66,7 +61,10 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
       () {
         switch (index) {
           case 0:
-            _child = HomeScreen(email: arguments['email'] ?? 'Unknown');
+            _child = HomeScreen(
+              email: arguments['email'] ?? '',
+              role: arguments['role'] ?? '',
+            );
             _selectedIndex = index;
             break;
           case 1:
@@ -74,7 +72,10 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
             _selectedIndex = index;
             break;
           case 2:
-            _child = const ProductListScreen(isAdmin: true);
+            _child = const ProductListScreen(
+              isAdmin: true,
+              onRoot: true,
+            );
             _selectedIndex = index;
             break;
           case 3:
@@ -98,11 +99,17 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
       () {
         switch (index) {
           case 0:
-            _child = const InvoiceScreen();
+            _child = HomeScreen(
+              email: arguments['email'] ?? '',
+              role: arguments['role'] ?? '',
+            );
             _selectedIndex = index;
             break;
           case 1:
-            _child = const ProductListScreen(isAdmin: false);
+            _child = const ProductListScreen(
+              isAdmin: false,
+              onRoot: true,
+            );
             _selectedIndex = index;
             break;
           case 2:
