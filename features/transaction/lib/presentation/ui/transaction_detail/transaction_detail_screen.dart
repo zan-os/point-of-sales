@@ -21,22 +21,25 @@ class TransactionDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final transaction = ModalRoute.of(context)?.settings.arguments
-        as List<TransactionDetailModel>;
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     return BlocProvider<TransactionCubit>(
       create: (context) =>
-          TransactionCubit()..emitTransactionDetail(transaction),
+          TransactionCubit()..emitTransactionDetail(args['transaction']),
       child: WillPopScope(
           onWillPop: () async {
             return false;
           },
-          child: const _TransactionDetailContent()),
+          child: _TransactionDetailContent(
+            isHistory: args['history'],
+          )),
     );
   }
 }
 
 class _TransactionDetailContent extends StatefulWidget {
-  const _TransactionDetailContent();
+  final bool isHistory;
+  const _TransactionDetailContent({required this.isHistory});
 
   @override
   State<_TransactionDetailContent> createState() =>
@@ -49,7 +52,8 @@ class _TransactionDetailContentState extends State<_TransactionDetailContent> {
   @override
   Widget build(BuildContext context) {
     final FocusNode unfocusNode = FocusNode();
-    return Scaffold(appBar: AppBarWidget(isHome: false, title: '', enableLeading: true),
+    return Scaffold(
+      appBar: const AppBarWidget(isHome: false, title: '', enableLeading: true),
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: GestureDetector(
@@ -89,7 +93,10 @@ class _TransactionDetailContentState extends State<_TransactionDetailContent> {
               controller: _screenshotController,
               child: _transactionDetail(state),
             ),
-            _doneButton(context, state.transactionDetail.first.transactionId),
+            (widget.isHistory)
+                ? const SizedBox.shrink()
+                : _doneButton(
+                    context, state.transactionDetail.first.transactionId),
             _printButton(context)
           ],
         ),
@@ -213,6 +220,7 @@ class _TransactionDetailContentState extends State<_TransactionDetailContent> {
           context
               .read<TransactionCubit>()
               .updateTransactionStatus(id: transactionId);
+          Navigator.pop(context);
         },
       ),
     );

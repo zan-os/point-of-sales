@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:common/model/categories_model.dart';
 import 'package:common/model/product_model.dart';
 import 'package:common/navigation/app_router.dart';
@@ -15,7 +17,9 @@ import 'package:ui/widgets/search_bar_widget.dart';
 
 class ProductListScreen extends StatelessWidget {
   final bool isAdmin;
-  const ProductListScreen({super.key, this.isAdmin = false});
+  final bool onRoot;
+  const ProductListScreen(
+      {super.key, this.isAdmin = false, this.onRoot = false});
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +31,7 @@ class ProductListScreen extends StatelessWidget {
         },
         child: _ProductListContent(
           isAdmin: isAdmin,
+          onRoot: onRoot,
         ),
       ),
     );
@@ -35,8 +40,12 @@ class ProductListScreen extends StatelessWidget {
 
 class _ProductListContent extends StatefulWidget {
   final bool isAdmin;
-  const _ProductListContent({Key? key, required this.isAdmin})
-      : super(key: key);
+  final bool onRoot;
+  const _ProductListContent({
+    Key? key,
+    required this.isAdmin,
+    required this.onRoot,
+  }) : super(key: key);
 
   @override
   _ProductListContentState createState() => _ProductListContentState();
@@ -59,18 +68,18 @@ class _ProductListContentState extends State<_ProductListContent> {
         listener: (context, state) {
           if (state.status == CubitState.loading) {
             showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => WillPopScope(
-              onWillPop: () async {
-                return false;
-              },
-              child: LoadingAnimationWidget.inkDrop(
-                color: Colors.white,
-                size: 50,
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => WillPopScope(
+                onWillPop: () async {
+                  return false;
+                },
+                child: LoadingAnimationWidget.inkDrop(
+                  color: Colors.white,
+                  size: 50,
+                ),
               ),
-            ),
-          );
+            );
           }
           if (state.status == CubitState.finishLoading) {
             Navigator.pop(context);
@@ -137,12 +146,15 @@ class _ProductListContentState extends State<_ProductListContent> {
         price: product.price,
         image: product.image,
         isStockManager: false,
+        onRoot: widget.onRoot,
         addButtonTap: () {
-          cubit.addToCart(product: product);
+          (widget.onRoot) ? cubit.addToCart(product: product) : null;
         },
         onProductTap: () {
           if (widget.isAdmin) {
-            cubit.fetchProductDetail(productId: product.id ?? 0);
+            (widget.onRoot)
+                ? cubit.fetchProductDetail(productId: product.id ?? 0)
+                : null;
           }
         },
       ),
@@ -267,10 +279,11 @@ class _ProductListContentState extends State<_ProductListContent> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
       child: Scaffold(
-        appBar: const AppBarWidget(
+        appBar: AppBarWidget(
+          onRoot: widget.onRoot,
           isHome: false,
           title: 'Product',
-          enableLeading: false,
+          enableLeading: true,
         ),
         key: scaffoldKey,
         backgroundColor: backgroundColor,

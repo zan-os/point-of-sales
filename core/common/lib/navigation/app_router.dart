@@ -9,4 +9,5 @@ class AppRouter {
   static const String invoiceDetail = '/invoice-detail';
   static const String stock = '/stock-list';
   static const String stockManager = '/stock-manager';
+  static const String productList = '/product-list';
 }

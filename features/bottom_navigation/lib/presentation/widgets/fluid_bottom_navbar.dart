@@ -85,8 +85,8 @@ class FluidBottomNavigationBar extends StatelessWidget {
   List<FluidNavBarIcon> _cashierIcon() {
     return [
       FluidNavBarIcon(
-          icon: Icons.library_books_outlined,
-          extras: {"label": "bookmark"},
+          icon: Icons.home_outlined,
+          extras: {"label": "Home"},
           backgroundColor: (selectedIndex == 0)
               ? ColorConstants.primaryYellow
               : ColorConstants.whiteBackground),

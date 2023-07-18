@@ -19,6 +19,7 @@ class InvoiceCubit extends Cubit<InvoiceState> {
           .from('transaction')
           .select()
           .filter('transaction_status', 'eq', '3')
+          .order('created_at', ascending: false)
           .then(
         (response) {
           final encoded = jsonEncode(response);

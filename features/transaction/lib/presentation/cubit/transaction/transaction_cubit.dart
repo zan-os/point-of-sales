@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:common/model/transaction_detail_model.dart';
 import 'package:common/utils/catch_error_logger.dart';
@@ -101,7 +100,6 @@ class TransactionCubit extends Cubit<TransactionState> {
   }
 
   void updateTransactionStatus({required int id}) async {
-    log('executed');
     try {
       _supabase
           .from('transaction')

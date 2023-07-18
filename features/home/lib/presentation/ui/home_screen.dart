@@ -12,9 +12,11 @@ import 'package:ui/widgets/statistic_data_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   final String email;
+  final String role;
   const HomeScreen({
     super.key,
     required this.email,
+    required this.role,
   });
 
   @override
@@ -25,16 +27,21 @@ class HomeScreen extends StatelessWidget {
           onWillPop: () async {
             return false;
           },
-          child: HomeScreenContent(email: email)),
+          child: HomeScreenContent(
+            email: email,
+            role: role,
+          )),
     );
   }
 }
 
 class HomeScreenContent extends StatefulWidget {
   final String email;
+  final String role;
   const HomeScreenContent({
     Key? key,
     required this.email,
+    required this.role,
   }) : super(key: key);
 
   @override
@@ -76,27 +83,24 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   }
 
   Widget _buildHomeBody() {
-    return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24.0),
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        children: [
-          _buildStatisticData(),
-          const SizedBox(
-            height: 10.0,
-          ),
-          _buildGridView(),
-          const SizedBox(height: 14.0),
-        ],
-      ),
+    return ListView(
+      padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24.0),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      children: [
+        _buildStatisticData(),
+        const SizedBox(
+          height: 10.0,
+        ),
+        _buildGridView(),
+        const SizedBox(height: 14.0),
+      ],
     );
   }
 
   // Showing features as a grid view
   GridView _buildGridView() {
-    // Dummy features data
-    final List<FeatureGridModel> gridItem = [
+    final List<FeatureGridModel> adminGridItem = [
       const FeatureGridModel(
         icon: Icons.add_box_outlined,
         title: 'Tambah Produk',
@@ -113,14 +117,31 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
           page: AppRouter.stock),
     ];
 
+    final List<FeatureGridModel> cashierGridItem = [
+      const FeatureGridModel(
+        icon: Icons.add_box_outlined,
+        title: 'List Produk',
+        page: AppRouter.productList,
+      ),
+      const FeatureGridModel(
+        icon: Icons.library_books_outlined,
+        title: 'List Transaksi',
+        page: AppRouter.invoice,
+      )
+    ];
+
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       gridDelegate:
           const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-      itemCount: gridItem.length,
+      itemCount: (widget.role == 'ADMIN')
+          ? adminGridItem.length
+          : cashierGridItem.length,
       itemBuilder: (context, index) {
-        final item = gridItem[index];
+        final item = (widget.role == 'ADMIN')
+            ? adminGridItem[index]
+            : cashierGridItem[index];
 
         return Padding(
           padding: const EdgeInsets.all(8.0),

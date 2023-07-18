@@ -62,7 +62,7 @@ class _InvoiceScreenContentState extends State<_InvoiceScreenContent> {
       appBar: const AppBarWidget(
         isHome: false,
         title: 'Transaction History',
-        enableLeading: false,
+        enableLeading: true,
       ),
       body: BlocConsumer<InvoiceCubit, InvoiceState>(
         listener: (context, state) {
@@ -70,7 +70,10 @@ class _InvoiceScreenContentState extends State<_InvoiceScreenContent> {
             Navigator.pushNamed(
               context,
               AppRouter.transactionDetail,
-              arguments: state.transactionDetail,
+              arguments: {
+                'transaction': state.transactionDetail,
+                'history': true
+              },
             );
           }
           if (state.status == CubitState.loading) {

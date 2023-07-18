@@ -82,7 +82,7 @@ class _TransactionScreenContentState extends State<_TransactionScreenContent> {
             Navigator.popAndPushNamed(
               context,
               AppRouter.transactionDetail,
-              arguments: state.transactionDetail,
+              arguments: {'transaction': state.transactionDetail, 'history': false},
             ).then((value) => Navigator.pop(context));
           }
           if (state.status == CubitState.loading) {
